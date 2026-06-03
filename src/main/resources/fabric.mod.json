@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "ambient_creatures",
+	"version": "${version}",
+	"name": "Ambient Creatures",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Victor Avila"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT-License",
+	"icon": "assets/ambient_creatures/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.victor.ambient_creatures.AmbientCreatures"
+		],
+		"fabric-datagen": [
+			"com.victor.ambient_creatures.AmbientCreaturesDataGenerator"
+		]
+	},
+	"mixins": [
+		"ambient_creatures.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.1.2",
+		"java": ">=25",
+		"fabric-api": "*"
+	}
+}
