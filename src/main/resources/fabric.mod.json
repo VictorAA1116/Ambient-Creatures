@@ -3,13 +3,13 @@
 	"id": "ambient_creatures",
 	"version": "${version}",
 	"name": "Ambient Creatures",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "This mod adds a few friendly mobs to the game that make the world feel more alive and immersive.",
 	"authors": [
 		"Victor Avila"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://victoraa1116.wixsite.com/portfolio",
+		"sources": "https://github.com/VictorAA1116/Ambient-Creatures"
 	},
 	"license": "MIT-License",
 	"icon": "assets/ambient_creatures/icon.png",
