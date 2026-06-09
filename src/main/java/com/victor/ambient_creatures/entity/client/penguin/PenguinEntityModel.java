@@ -1,5 +1,6 @@
 package com.victor.ambient_creatures.entity.client.penguin;
 
+import net.minecraft.client.animation.KeyframeAnimation;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartNames;
@@ -12,7 +13,7 @@ import net.minecraft.util.Mth;
 
 public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
 {
-    //private final ModelPart root;
+    private final ModelPart root;
     private final ModelPart head;
     private final ModelPart body;
     private final ModelPart rightWing;
@@ -21,47 +22,65 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
     private final ModelPart leftLeg;
     private final ModelPart tail;
 
+    private final KeyframeAnimation idleAnimation;
+    private final KeyframeAnimation walkingAnimation;
+    private final KeyframeAnimation swimIdleAnimation;
+    private final KeyframeAnimation swimmingAnimation;
+    private final KeyframeAnimation slidingAnimation;
+
     protected PenguinEntityModel(ModelPart root)
     {
         super(root);
 
-        //this.root = root.getChild(PartNames.ROOT);
-        this.body = root.getChild(PartNames.BODY);
-        this.head = root.getChild(PartNames.HEAD);
-        this.rightWing = root.getChild(PartNames.RIGHT_WING);
-        this.leftWing = root.getChild(PartNames.LEFT_WING);
-        this.rightLeg = root.getChild(PartNames.RIGHT_LEG);
-        this.leftLeg = root.getChild(PartNames.LEFT_LEG);
-        this.tail = root.getChild(PartNames.TAIL);
+        this.root = root.getChild(PartNames.ROOT);
+        this.body = this.root.getChild(PartNames.BODY);
+        this.head = this.body.getChild(PartNames.HEAD);
+        this.rightWing = this.body.getChild(PartNames.RIGHT_WING);
+        this.leftWing = this.body.getChild(PartNames.LEFT_WING);
+        this.rightLeg = this.body.getChild(PartNames.RIGHT_LEG);
+        this.leftLeg = this.body.getChild(PartNames.LEFT_LEG);
+        this.tail = this.body.getChild(PartNames.TAIL);
+
+        this.idleAnimation = PenguinAnimations.IDLE.bake(root);
+        this.walkingAnimation = PenguinAnimations.WALKING.bake(root);
+        this.swimIdleAnimation = PenguinAnimations.SWIM_IDLE.bake(root);
+        this.swimmingAnimation = PenguinAnimations.SWIMMING.bake(root);
+        this.slidingAnimation = PenguinAnimations.SLIDING.bake(root);
     }
 
     public static LayerDefinition getTexturedModelData()
     {
+        final float yOffset = 17.5F;
+
+        // Root
         MeshDefinition modelData = new MeshDefinition();
-        PartDefinition root = modelData.getRoot();
+        PartDefinition modelPartDefinition = modelData.getRoot();
+        PartDefinition root = modelPartDefinition.addOrReplaceChild(PartNames.ROOT, CubeListBuilder.create(), PartPose.offsetAndRotation(.0F, yOffset, 0.0F, 0.0F, 0.0F, 0.0F));
 
-        final float yOffset = 17.5f;
+        // Body
+        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0,0).addBox(-3.0F, -5.5F, -3.0F, 6.0F, 10.0F, 6.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
 
-        root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0,0).addBox(-3.0F, -5.5F, -3.0F, 6.0F, 10.0F, 6.0F), PartPose.offset(0.0F, 0.0F + yOffset, 0.0F));
-
-        root.addOrReplaceChild(PartNames.HEAD, CubeListBuilder.create()
+        // Head
+        body.addOrReplaceChild(PartNames.HEAD, CubeListBuilder.create()
                 .texOffs(0,18).addBox(-2.5F, -2.55F, -2.45F, 5.0F, 5.0F, 5.0F) // Main Head
                 .texOffs(25, 0).addBox(-1.0F, 0.45F, -4.45F, 2.0F, 1.0F, 2.0F), // Beak
-                PartPose.offsetAndRotation(0.0F, -7.95F + yOffset, -0.05F, 0.0F, 0.0F, 0.0F));
+                PartPose.offsetAndRotation(0.0F, -7.95F, -0.05F, 0.0F, 0.0F, 0.0F));
 
-        root.addOrReplaceChild(PartNames.LEFT_WING, CubeListBuilder.create().texOffs(23,18).addBox(0.0F, 0.0F, -1.5F, 1.0F, 7.0F, 3.0F), PartPose.offset(3.0F, -4.0F + yOffset, 0.0F));
+        // Wings
+        body.addOrReplaceChild(PartNames.LEFT_WING, CubeListBuilder.create().texOffs(23,18).addBox(0.0F, 0.0F, -1.5F, 1.0F, 7.0F, 3.0F), PartPose.offset(3.0F, -4.0F, 0.0F));
 
-        root.addOrReplaceChild(PartNames.RIGHT_WING, CubeListBuilder.create().texOffs(23,18).mirror().addBox(-1.0F, 0.0F, -1.5F, 1.0F, 7.0F, 3.0F).mirror(false), PartPose.offset(-3.0F, -4.0F + yOffset, 0.0F));
-
-        // Foot, Leg
-        root.addOrReplaceChild(PartNames.LEFT_LEG, CubeListBuilder.create().texOffs(24,7).addBox(-1.5F, 2.0F, -2.0F, 3.0F, 0.0F, 2.0F), PartPose.offset(1.5F, 4.45F + yOffset, 0.0F));
-        root.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(25,5).addBox(-1.0F, 0.0F, -2.0F, 1.0F, 0.0F, 2.0F), PartPose.offsetAndRotation(2F, 4.5F + yOffset, 0.0F, 1.5708F, 0.0F, 0.0F));
+        body.addOrReplaceChild(PartNames.RIGHT_WING, CubeListBuilder.create().texOffs(23,18).mirror().addBox(-1.0F, 0.0F, -1.5F, 1.0F, 7.0F, 3.0F).mirror(false), PartPose.offset(-3.0F, -4.0F, 0.0F));
 
         // Foot, Leg
-        root.addOrReplaceChild(PartNames.RIGHT_LEG, CubeListBuilder.create().texOffs(24,7).mirror().addBox(-1.5F, 2.0F, -2.0F, 3.0F, 0.0F, 2.0F).mirror(false), PartPose.offset(-1.5F, 4.45F + yOffset, 0.0F));
-        root.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(25,5).mirror().addBox(0.0F, 0.0F, -2.0F, 1.0F, 0.0F, 2.0F).mirror(false), PartPose.offsetAndRotation(-2F, 4.5F + yOffset, 0.0F, 1.5708F, 0.0F, 0.0F));
+        PartDefinition leftLeg = body.addOrReplaceChild(PartNames.LEFT_LEG, CubeListBuilder.create().texOffs(24,7).addBox(-1.5F, 2.0F, -2.0F, 3.0F, 0.0F, 2.0F), PartPose.offset(1.5F, 4.45F, 0.0F));
+        leftLeg.addOrReplaceChild("cube_r1", CubeListBuilder.create().texOffs(25,5).addBox(-1.0F, 0.0F, -2.0F, 1.0F, 0.0F, 2.0F), PartPose.offsetAndRotation(0.5F, 0.0F, 0.0F, 1.5708F, 0.0F, 0.0F));
 
-        root.addOrReplaceChild(PartNames.TAIL, CubeListBuilder.create().texOffs(22,11).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 0.0F, 4.0F), PartPose.offset(0.0F, 4.5F + yOffset, 3.0F));
+        // Foot, Leg
+        PartDefinition rightLeg = body.addOrReplaceChild(PartNames.RIGHT_LEG, CubeListBuilder.create().texOffs(24,7).mirror().addBox(-1.5F, 2.0F, -2.0F, 3.0F, 0.0F, 2.0F).mirror(false), PartPose.offset(-1.5F, 4.45F, 0.0F));
+        rightLeg.addOrReplaceChild("cube_r2", CubeListBuilder.create().texOffs(25,5).mirror().addBox(0.0F, 0.0F, -2.0F, 1.0F, 0.0F, 2.0F).mirror(false), PartPose.offsetAndRotation(-0.5F, 0.0F, 0.0F, 1.5708F, 0.0F, 0.0F));
+
+        // Tail
+        body.addOrReplaceChild(PartNames.TAIL, CubeListBuilder.create().texOffs(22,11).addBox(-2.0F, 0.0F, 0.0F, 4.0F, 0.0F, 4.0F), PartPose.offset(0.0F, 4.5F, 3.0F));
 
         return LayerDefinition.create(modelData, 64, 64);
     }
@@ -70,60 +89,65 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
     public void setupAnim(PenguinEntityRenderState state)
     {
         super.setupAnim(state);
+        this.resetPose();
 
-        this.head.xRot = state.xRot * Mth.RAD_TO_DEG;
-        this.head.yRot = state.yRot * Mth.RAD_TO_DEG;
+        if (state.swimmingAnimationState.isStarted())
+        {
+            this.swimmingAnimation.apply(state.swimmingAnimationState, state.ageInTicks);
+        }
+        else if (state.walkingAnimationState.isStarted())
+        {
+            float limbSwingAmplitude = state.walkAnimationSpeed * 1.5f; // changes based on mob's velocity
+            float limbSwingAnimationProgress = state.walkAnimationPos;
 
-        float limbSwingAmplitude = state.walkAnimationSpeed; // changes based on mob's velocity
-        float limbSwingAnimationProgress = state.walkAnimationPos;
+            // adjustable parameters for walk animation, can be used to make the limbs swing faster/slower and with more/less intensity
+            float limbSwingSpeed = 0.2f;
+            float limbSwingAmount = 1.4f;
 
-        // adjustable parameters for walk animation, can be used to make the limbs swing faster/slower and with more/less intensity
-        float limbSwingSpeed = 0.2f;
-        float limbSwingAmount = 1.4f;
+            this.walkingAnimation.applyWalk(limbSwingAnimationProgress, limbSwingAmplitude, limbSwingSpeed, limbSwingAmount);
+        }
+        else if (state.idleAnimationState.isStarted())
+        {
+            this.idleAnimation.apply(state.idleAnimationState, state.ageInTicks);
+        }
+        else if (state.swimIdleAnimationState.isStarted())
+        {
+            this.swimIdleAnimation.apply(state.swimIdleAnimationState, state.ageInTicks);
+        }
+        else if (state.slidingAnimationState.isStarted())
+        {
+            this.slidingAnimation.apply(state.slidingAnimationState, state.ageInTicks);
+        }
 
-        // Mth.Pi translates the cos wave one half phase over to make the limbs swing opposite of each other
-        this.leftLeg.xRot = Mth.cos(limbSwingAnimationProgress * limbSwingSpeed + Mth.PI) * limbSwingAmount * limbSwingAmplitude;
-        this.leftLeg.xRot = Mth.cos(limbSwingAnimationProgress * limbSwingSpeed) * limbSwingAmount * limbSwingAmplitude;
+        // Only add to body pitch when touching water (not for sliding)
+        if (state.touchingWater)        {
+            this.body.xRot += state.xRot * (float)(Math.PI / 180.0F);
+        }
+
+        boolean shouldBeLayingDown = state.slidingAnimationState.isStarted() || state.swimmingAnimationState.isStarted() || state.swimIdleAnimationState.isStarted();
+
+        this.setHeadAngles(state.yRot, state.xRot, shouldBeLayingDown);
     }
 
-//    @Override
-//    public void setAngles(PenguinRenderState state) {
-//        super.setAngles(state);
-//        this. resetTransforms();
-//
-//        if (state.swimAnimationState.isRunning()) {
-//            this.swimAnimation.apply(state.swimAnimationState, state.age, 1f);
-//        } else if (state.walkAnimationState.isRunning()) {
-//            this.walkAnimation.applyWalking(state.limbSwingAnimationProgress, state.limbSwingAmplitude * 1.5f, 2f, 2.5f);
-//        } else if (state.idleAnimationState.isRunning()) {
-//            this.idleAnimation.apply(state.idleAnimationState, state.age, 1f);
-//        } else if (state.swimIdleAnimationState.isRunning()) {
-//            this.swimIdleAnimation.apply(state.swimIdleAnimationState, state.age, 1f);
-//        } else if (state.slideAnimationState.isRunning()) {
-//            this.slideAnimation.apply(state.slideAnimationState, state.age, 1f);
-//        }
-//
-//        if (state.touchingWater) {
-//            this.body.pitch += state.pitch * ((float)Math.PI / 180F);
-//        }
-//
-//        this.setHeadAngles(state.relativeHeadYaw, state.pitch, state.slideAnimationState.isRunning() || state.swimAnimationState.isRunning() || state.swimIdleAnimationState.isRunning());
-//    }
-//
-//    private void setHeadAngles(float headYaw, float headPitch, boolean isSliding) {
-//        headYaw = MathHelper.clamp(headYaw, -30.0f, 30.0f);
-//        headPitch = MathHelper.clamp(headPitch, -25.0f, 45.0f);
-//
-//        if (isSliding) {
-//            headPitch -= 90f;
-//        }
-//
-//        this.head.pitch = headPitch * (float) (Math.PI / 180.0);
-//
-//        if (isSliding) {
-//            this.head.roll = -(headYaw * 0.017453292F);
-//        } else {
-//            this.head.yaw = headYaw * 0.017453292F;
-//        }
-//    }
+    private void setHeadAngles(float headYaw, float headPitch, boolean isLayingDown)
+    {
+        headYaw = Mth.clamp(headYaw, -30.0f, 30.0f);
+        headPitch = Mth.clamp(headPitch, -25.0f, 45.0f);
+
+        if (isLayingDown)
+        {
+            headPitch -= 90f;
+        }
+
+        this.head.xRot = headPitch * (float)(Math.PI / 180.0F);
+
+        if (isLayingDown)
+        {
+            this.head.zRot = -(headYaw * 0.017453292F);
+        }
+        else
+        {
+            this.head.yRot = headYaw * 0.017453292F;
+        }
+    }
 }
