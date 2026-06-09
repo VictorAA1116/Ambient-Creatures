@@ -1,10 +1,13 @@
 package com.victor.ambient_creatures.entity.client.penguin;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.victor.ambient_creatures.AmbientCreatures;
 import com.victor.ambient_creatures.entity.ModEntityModelLayers;
 import com.victor.ambient_creatures.entity.custom.PenguinEntity;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
 
 public class PenguinEntityRenderer extends MobRenderer<PenguinEntity, PenguinEntityRenderState, PenguinEntityModel>
@@ -27,6 +30,21 @@ public class PenguinEntityRenderer extends MobRenderer<PenguinEntity, PenguinEnt
     public Identifier getTextureLocation(PenguinEntityRenderState state)
     {
         return TEXTURE_PATH;
+    }
+
+    @Override
+    public void submit(final PenguinEntityRenderState state, final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final CameraRenderState camera)
+    {
+        if (state.isBaby)
+        {
+            poseStack.scale(0.5F, 0.5F, 0.5F);
+        }
+        else
+        {
+            poseStack.scale(1.0F, 1.0F, 1.0F);
+        }
+
+        super.submit(state, poseStack, submitNodeCollector, camera);
     }
 
     @Override

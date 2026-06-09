@@ -101,8 +101,8 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
             float limbSwingAnimationProgress = state.walkAnimationPos;
 
             // adjustable parameters for walk animation, can be used to make the limbs swing faster/slower and with more/less intensity
-            float limbSwingSpeed = 0.2f;
-            float limbSwingAmount = 1.4f;
+            float limbSwingSpeed = 2.0f;
+            float limbSwingAmount = 2.5f;
 
             this.walkingAnimation.applyWalk(limbSwingAnimationProgress, limbSwingAmplitude, limbSwingSpeed, limbSwingAmount);
         }
@@ -120,7 +120,8 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
         }
 
         // Only add to body pitch when touching water (not for sliding)
-        if (state.touchingWater)        {
+        if (state.touchingWater)
+        {
             this.body.xRot += state.xRot * (float)(Math.PI / 180.0F);
         }
 
