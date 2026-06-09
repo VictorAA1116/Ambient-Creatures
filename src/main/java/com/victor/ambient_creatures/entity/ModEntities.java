@@ -17,8 +17,8 @@ import net.minecraft.world.entity.MobCategory;
 public class ModEntities
 {
     public static final EntityType<PenguinEntity> PENGUIN = register("penguin",
-            EntityType.Builder.<PenguinEntity>of(PenguinEntity::new, MobCategory.AMBIENT)
-                    .sized(0.5f, 1f)
+            EntityType.Builder.of(PenguinEntity::new, MobCategory.AMBIENT)
+                    .sized(0.5f, 1.0f)
     );
 
     public static void registerModEntities()

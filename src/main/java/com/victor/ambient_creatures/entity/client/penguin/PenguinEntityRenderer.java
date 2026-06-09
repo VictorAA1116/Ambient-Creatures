@@ -7,6 +7,7 @@ import com.victor.ambient_creatures.entity.custom.PenguinEntity;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
+import net.minecraft.client.renderer.entity.state.HoldingEntityRenderState;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
 
@@ -18,6 +19,8 @@ public class PenguinEntityRenderer extends MobRenderer<PenguinEntity, PenguinEnt
     public PenguinEntityRenderer(EntityRendererProvider.Context context)
     {
         super(context, new PenguinEntityModel(context.bakeLayer(ModEntityModelLayers.PENGUIN)), shadowSize);
+
+        this.addLayer(new PenguinHeldItemLayer(this));
     }
 
     @Override
@@ -51,6 +54,8 @@ public class PenguinEntityRenderer extends MobRenderer<PenguinEntity, PenguinEnt
     public void extractRenderState(PenguinEntity penguinEntity, PenguinEntityRenderState state, float f)
     {
         super.extractRenderState(penguinEntity, state, f);
+
+        HoldingEntityRenderState.extractHoldingEntityRenderState(penguinEntity, state, this.itemModelResolver);
 
         state.idleAnimationState.copyFrom(penguinEntity.idleAnimationState);
         state.walkingAnimationState.copyFrom(penguinEntity.walkingAnimationState);

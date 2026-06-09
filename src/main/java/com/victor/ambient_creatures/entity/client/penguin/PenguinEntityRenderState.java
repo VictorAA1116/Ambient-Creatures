@@ -1,9 +1,9 @@
 package com.victor.ambient_creatures.entity.client.penguin;
 
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.entity.state.HoldingEntityRenderState;
 import net.minecraft.world.entity.AnimationState;
 
-public class PenguinEntityRenderState extends LivingEntityRenderState
+public class PenguinEntityRenderState extends HoldingEntityRenderState
 {
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState walkingAnimationState = new AnimationState();

@@ -14,8 +14,8 @@ import net.minecraft.util.Mth;
 public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
 {
     private final ModelPart root;
-    private final ModelPart head;
-    private final ModelPart body;
+    public final ModelPart head;
+    public final ModelPart body;
     private final ModelPart rightWing;
     private final ModelPart leftWing;
     private final ModelPart rightLeg;
@@ -55,10 +55,10 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
         // Root
         MeshDefinition modelData = new MeshDefinition();
         PartDefinition modelPartDefinition = modelData.getRoot();
-        PartDefinition root = modelPartDefinition.addOrReplaceChild(PartNames.ROOT, CubeListBuilder.create(), PartPose.offsetAndRotation(.0F, yOffset, 0.0F, 0.0F, 0.0F, 0.0F));
+        PartDefinition root = modelPartDefinition.addOrReplaceChild(PartNames.ROOT, CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         // Body
-        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0,0).addBox(-3.0F, -5.5F, -3.0F, 6.0F, 10.0F, 6.0F), PartPose.offset(0.0F, 0.0F, 0.0F));
+        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0,0).addBox(-3.0F, -5.5F, -3.0F, 6.0F, 10.0F, 6.0F), PartPose.offset(0.0F, yOffset, 0.0F));
 
         // Head
         body.addOrReplaceChild(PartNames.HEAD, CubeListBuilder.create()
