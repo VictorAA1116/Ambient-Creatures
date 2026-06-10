@@ -1,7 +1,7 @@
 package com.victor.ambient_creatures.world.gen;
 
 import com.victor.ambient_creatures.entity.ModEntities;
-import com.victor.ambient_creatures.entity.custom.PenguinEntity;
+import com.victor.ambient_creatures.entity.custom.Penguin;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.core.BlockPos;
@@ -9,7 +9,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,7 +16,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 public class ModEntitySpawns
 {
-    public static boolean canPenguinSpawn(EntityType<PenguinEntity> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
+    public static boolean canPenguinSpawn(EntityType<Penguin> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
     {
         BlockState stateBelow = level.getBlockState(blockPos.below());
 
@@ -39,7 +38,7 @@ public class ModEntitySpawns
         return false;
     }
 
-//    public static boolean canCapybaraSpawn(EntityType<CapybaraEntity> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
+//    public static boolean canCapybaraSpawn(EntityType<Capybara> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
 //    {
 //
 //        if (Animal.checkAnimalSpawnRules(type, level,spawnReason, blockPos, random))

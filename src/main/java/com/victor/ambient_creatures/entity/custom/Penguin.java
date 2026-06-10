@@ -47,13 +47,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-public class PenguinEntity extends Animal
+public class Penguin extends Animal
 {
-    private static final EntityDataAccessor<Boolean> IDLE = SynchedEntityData.defineId(PenguinEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> WALKING = SynchedEntityData.defineId(PenguinEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SWIM_IDLE = SynchedEntityData.defineId(PenguinEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SWIMMING = SynchedEntityData.defineId(PenguinEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> SLIDING = SynchedEntityData.defineId(PenguinEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IDLE = SynchedEntityData.defineId(Penguin.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> WALKING = SynchedEntityData.defineId(Penguin.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SWIM_IDLE = SynchedEntityData.defineId(Penguin.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SWIMMING = SynchedEntityData.defineId(Penguin.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> SLIDING = SynchedEntityData.defineId(Penguin.class, EntityDataSerializers.BOOLEAN);
 
     public final AnimationState idleAnimationState = new AnimationState();
     public final AnimationState walkingAnimationState = new AnimationState();
@@ -67,7 +67,7 @@ public class PenguinEntity extends Animal
     boolean landBound;
     private static final Predicate<ItemEntity> PICKABLE_DROP_FILTER;
 
-    public PenguinEntity(EntityType<? extends Animal> type, Level level)
+    public Penguin(EntityType<? extends Animal> type, Level level)
     {
         super(type, level);
         this.setPathfindingMalus(PathType.WATER, 0.0F);
@@ -617,7 +617,7 @@ public class PenguinEntity extends Animal
 
         public PenguinPickupItemGoal(Predicate<ItemEntity> itemFilter, double range, double speedModifier)
         {
-            Objects.requireNonNull(PenguinEntity.this);
+            Objects.requireNonNull(Penguin.this);
             super();
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
 
@@ -628,20 +628,20 @@ public class PenguinEntity extends Animal
 
         public boolean canUse()
         {
-            if (!PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty())
+            if (!Penguin.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty())
             {
                 return false;
             }
-            else if (PenguinEntity.this.getTarget() == null && PenguinEntity.this.getLastHurtByMob() == null)
+            else if (Penguin.this.getTarget() == null && Penguin.this.getLastHurtByMob() == null)
             {
-                if (PenguinEntity.this.getRandom().nextInt(reducedTickDelay(10)) != 0)
+                if (Penguin.this.getRandom().nextInt(reducedTickDelay(10)) != 0)
                 {
                     return false;
                 }
                 else
                 {
-                    List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().inflate(range), itemFilter);
-                    return !list.isEmpty() && PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
+                    List<ItemEntity> list = Penguin.this.level().getEntitiesOfClass(ItemEntity.class, Penguin.this.getBoundingBox().inflate(range), itemFilter);
+                    return !list.isEmpty() && Penguin.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
                 }
             }
             else
@@ -652,23 +652,23 @@ public class PenguinEntity extends Animal
 
         public void tick()
         {
-            List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().inflate(range), itemFilter);
+            List<ItemEntity> list = Penguin.this.level().getEntitiesOfClass(ItemEntity.class, Penguin.this.getBoundingBox().inflate(range), itemFilter);
 
-            ItemStack itemStack = PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND);
+            ItemStack itemStack = Penguin.this.getItemBySlot(EquipmentSlot.MAINHAND);
 
             if (itemStack.isEmpty() && !list.isEmpty())
             {
-                PenguinEntity.this.getNavigation().moveTo((Entity)list.get(0), speedModifier);
+                Penguin.this.getNavigation().moveTo((Entity)list.get(0), speedModifier);
             }
         }
 
         public void start()
         {
-            List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().inflate(range), itemFilter);
+            List<ItemEntity> list = Penguin.this.level().getEntitiesOfClass(ItemEntity.class, Penguin.this.getBoundingBox().inflate(range), itemFilter);
 
             if (!list.isEmpty())
             {
-                PenguinEntity.this.getNavigation().moveTo((Entity)list.get(0), speedModifier);
+                Penguin.this.getNavigation().moveTo((Entity)list.get(0), speedModifier);
             }
         }
     }

@@ -9,15 +9,15 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
-public class PenguinHeldItemLayer extends RenderLayer<PenguinEntityRenderState, PenguinEntityModel>
+public class PenguinHeldItemLayer extends RenderLayer<PenguinRenderState, PenguinModel>
 {
-    public PenguinHeldItemLayer(RenderLayerParent<PenguinEntityRenderState, PenguinEntityModel> renderer)
+    public PenguinHeldItemLayer(RenderLayerParent<PenguinRenderState, PenguinModel> renderer)
     {
         super(renderer);
     }
 
     @Override
-    public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, PenguinEntityRenderState state, float yRot, float xRot)
+    public void submit(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, PenguinRenderState state, float yRot, float xRot)
     {
         ItemStackRenderState itemRenderState = state.heldItem;
 
@@ -26,7 +26,7 @@ public class PenguinHeldItemLayer extends RenderLayer<PenguinEntityRenderState, 
             boolean isSliding = state.slidingAnimationState.isStarted() || state.swimIdleAnimationState.isStarted() || state.swimmingAnimationState.isStarted();
             poseStack.pushPose();
 
-            PenguinEntityModel model = this.getParentModel();
+            PenguinModel model = this.getParentModel();
             ModelPart root = model.root();
             ModelPart head = model.head;
             ModelPart body = model.body;

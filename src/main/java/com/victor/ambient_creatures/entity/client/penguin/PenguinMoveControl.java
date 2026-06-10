@@ -1,6 +1,6 @@
 package com.victor.ambient_creatures.entity.client.penguin;
 
-import com.victor.ambient_creatures.entity.custom.PenguinEntity;
+import com.victor.ambient_creatures.entity.custom.Penguin;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
@@ -8,9 +8,9 @@ import net.minecraft.world.phys.Vec3;
 
 public class PenguinMoveControl extends MoveControl
 {
-    private final PenguinEntity penguin;
+    private final Penguin penguin;
 
-    public PenguinMoveControl(PenguinEntity penguin) {
+    public PenguinMoveControl(Penguin penguin) {
         super(penguin);
         this.penguin = penguin;
     }

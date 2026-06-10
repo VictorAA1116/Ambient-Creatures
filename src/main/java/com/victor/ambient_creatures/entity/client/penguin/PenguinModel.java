@@ -11,7 +11,7 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 
-public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
+public class PenguinModel extends EntityModel<PenguinRenderState>
 {
     private final ModelPart root;
     public final ModelPart head;
@@ -28,7 +28,7 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
     private final KeyframeAnimation swimmingAnimation;
     private final KeyframeAnimation slidingAnimation;
 
-    protected PenguinEntityModel(ModelPart root)
+    protected PenguinModel(ModelPart root)
     {
         super(root);
 
@@ -86,7 +86,7 @@ public class PenguinEntityModel extends EntityModel<PenguinEntityRenderState>
     }
 
     @Override
-    public void setupAnim(PenguinEntityRenderState state)
+    public void setupAnim(PenguinRenderState state)
     {
         super.setupAnim(state);
         this.resetPose();

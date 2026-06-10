@@ -1,8 +1,8 @@
 package com.victor.ambient_creatures.entity;
 
 import com.victor.ambient_creatures.AmbientCreatures;
-import com.victor.ambient_creatures.entity.client.penguin.PenguinEntityRenderer;
-import com.victor.ambient_creatures.entity.custom.PenguinEntity;
+import com.victor.ambient_creatures.entity.client.penguin.PenguinRenderer;
+import com.victor.ambient_creatures.entity.custom.Penguin;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.Registry;
@@ -16,8 +16,8 @@ import net.minecraft.world.entity.MobCategory;
 
 public class ModEntities
 {
-    public static final EntityType<PenguinEntity> PENGUIN = register("penguin",
-            EntityType.Builder.of(PenguinEntity::new, MobCategory.AMBIENT)
+    public static final EntityType<Penguin> PENGUIN = register("penguin",
+            EntityType.Builder.of(Penguin::new, MobCategory.AMBIENT)
                     .sized(0.5f, 1.0f)
     );
 
@@ -29,7 +29,7 @@ public class ModEntities
         registerAttributes();
         ModEntityModelLayers.registerModelLayers();
 
-        EntityRenderers.register(PENGUIN, PenguinEntityRenderer::new);
+        EntityRenderers.register(PENGUIN, PenguinRenderer::new);
     }
 
     private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
@@ -46,6 +46,6 @@ public class ModEntities
 
     public static void registerAttributes()
     {
-        FabricDefaultAttributeRegistry.register(PENGUIN, PenguinEntity.createAttributes());
+        FabricDefaultAttributeRegistry.register(PENGUIN, Penguin.createAttributes());
     }
 }

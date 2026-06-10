@@ -1,6 +1,6 @@
 package com.victor.ambient_creatures.entity.client.penguin;
 
-import com.victor.ambient_creatures.entity.custom.PenguinEntity;
+import com.victor.ambient_creatures.entity.custom.Penguin;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.level.Level;
@@ -8,14 +8,14 @@ import net.minecraft.world.level.block.Blocks;
 
 public class PenguinSwimNavigation extends AmphibiousPathNavigation
 {
-    public PenguinSwimNavigation(PenguinEntity owner, Level level) {
+    public PenguinSwimNavigation(Penguin owner, Level level) {
         super(owner, level);
     }
 
     @Override
     public boolean isStableDestination(BlockPos pos) {
-        if (this.mob instanceof PenguinEntity penguinEntity) {
-            if (penguinEntity.travelPos != null) {
+        if (this.mob instanceof Penguin penguin) {
+            if (penguin.travelPos != null) {
                 return this.level.getBlockState(pos).is(Blocks.WATER);
             }
         }
