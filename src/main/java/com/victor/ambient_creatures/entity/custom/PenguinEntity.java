@@ -4,6 +4,7 @@ import com.victor.ambient_creatures.entity.ModEntities;
 import com.victor.ambient_creatures.entity.client.ai.goal.WanderInWaterGoal;
 import com.victor.ambient_creatures.entity.client.penguin.PenguinMoveControl;
 import com.victor.ambient_creatures.entity.client.penguin.PenguinSwimNavigation;
+import com.victor.ambient_creatures.sound.ModSounds;
 import com.victor.ambient_creatures.util.ModTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
@@ -30,8 +31,6 @@ import net.minecraft.world.entity.animal.fish.TropicalFish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -45,6 +44,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class PenguinEntity extends Animal
@@ -98,23 +98,16 @@ public class PenguinEntity extends Animal
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, TropicalFish.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Pufferfish.class, true));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.15));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1, Ingredient.of(Items.SALMON), false));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1, Ingredient.of(Items.COD), false));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1, Ingredient.of(Items.TROPICAL_FISH), false));
+        this.goalSelector.addGoal(3, new PenguinPickupItemGoal(PICKABLE_DROP_FILTER, 10.0D, 1.2D));
+        this.goalSelector.addGoal(4, new TemptGoal(this, 1, (stack) -> stack.is(ModTags.Items.PENGUIN_FOODS), false));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1));
         this.goalSelector.addGoal(7, new TryFindWaterGoal(this));
         this.goalSelector.addGoal(8, new RandomSwimmingGoal(this, 1, 1));
         this.goalSelector.addGoal(8, new WanderInWaterGoal(this, 1.1));
-        this.goalSelector.addGoal(9, new PenguinPickupItemGoal(this));
         this.goalSelector.addGoal(10, new MeleeAttackGoal(this, 1.5, true));
         this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 4));
         this.goalSelector.addGoal(12, new RandomLookAroundGoal(this));
-    }
-
-    private boolean isConsumableFood(ItemStack itemStack)
-    {
-        return itemStack.has(DataComponents.FOOD) && itemStack.has(DataComponents.CONSUMABLE);
     }
 
     @Override
@@ -517,34 +510,20 @@ public class PenguinEntity extends Animal
         return ModEntities.PENGUIN.create(level, EntitySpawnReason.BREEDING);
     }
 
-//    @Override
-//    protected @Nullable SoundEvent getAmbientSound() {
-//        return ModSounds.PENGUIN_AMBIENT;
-//    }
+    @Override
+    protected @Nullable SoundEvent getAmbientSound() { return ModSounds.PENGUIN_AMBIENT; }
 
     @Override
-    protected @Nullable SoundEvent getDeathSound()
-    {
-        return super.getDeathSound();
-    }
+    protected @Nullable SoundEvent getDeathSound() { return super.getDeathSound(); }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state)
-    {
-        this.playSound(SoundEvents.CHICKEN_STEP.value(), 0.15F, 1.0F);
-    }
+    protected void playStepSound(BlockPos pos, BlockState state) { this.playSound(SoundEvents.CHICKEN_STEP.value(), 0.15F, 1.0F); }
 
     @Override
-    protected void playSwimSound(float volume)
-    {
-        super.playSwimSound(volume * 1.5F);
-    }
+    protected void playSwimSound(float volume) { super.playSwimSound(volume * 1.5F); }
 
     @Override
-    protected @NonNull SoundEvent getSwimSound()
-    {
-        return SoundEvents.GENERIC_SWIM;
-    }
+    protected @NonNull SoundEvent getSwimSound() { return SoundEvents.GENERIC_SWIM; }
 
     @Override
     protected PathNavigation createNavigation(Level level)
@@ -554,14 +533,14 @@ public class PenguinEntity extends Animal
 
     static
     {
-        PICKABLE_DROP_FILTER = (item) -> !item.hasPickUpDelay() && item.isAlive();
+        PICKABLE_DROP_FILTER = (item) -> !item.hasPickUpDelay() && item.isAlive() && item.getItem().is(ModTags.Items.PENGUIN_FOODS);
     }
 
     public boolean canPickupItem(ItemStack stack)
     {
         ItemStack equippedItemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
 
-        return equippedItemStack.isEmpty() || this.eatingTime > 0 && stack.has(DataComponents.FOOD) && !equippedItemStack.has(DataComponents.FOOD);
+        return equippedItemStack.isEmpty() || this.eatingTime > 0 && stack.has(DataComponents.FOOD) && !equippedItemStack.has(DataComponents.FOOD) && equippedItemStack.is(ModTags.Items.PENGUIN_FOODS);
     }
 
     private void spit(ItemStack stack)
@@ -587,7 +566,7 @@ public class PenguinEntity extends Animal
     {
         ItemStack itemStack = itemEntity.getItem();
 
-        if (this.canPickupItem(itemStack) && itemStack.is(ModTags.Items.PENGUIN_FOODS))
+        if (this.canPickupItem(itemStack))
         {
             int i = itemStack.getCount();
 
@@ -632,30 +611,36 @@ public class PenguinEntity extends Animal
 
     public class PenguinPickupItemGoal extends Goal
     {
-        public PenguinPickupItemGoal(PenguinEntity entity)
+        Predicate<ItemEntity> itemFilter;
+        double speedModifier = 1.0D;
+        double range = 8.0D;
+
+        public PenguinPickupItemGoal(Predicate<ItemEntity> itemFilter, double range, double speedModifier)
         {
+            Objects.requireNonNull(PenguinEntity.this);
+            super();
             this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+
+            this.itemFilter = itemFilter;
+            this.speedModifier = speedModifier;
+            this.range = range;
         }
 
         public boolean canUse()
         {
-            if (PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty())
+            if (!PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty())
             {
                 return false;
             }
             else if (PenguinEntity.this.getTarget() == null && PenguinEntity.this.getLastHurtByMob() == null)
             {
-                if (!PenguinEntity.this.getNavigation().isDone())
-                {
-                    return false;
-                }
-                else if (PenguinEntity.this.getRandom().nextInt(reducedTickDelay(10)) != 0)
+                if (PenguinEntity.this.getRandom().nextInt(reducedTickDelay(10)) != 0)
                 {
                     return false;
                 }
                 else
                 {
-                    List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().expandTowards((double)8.0F, (double)8.0F, (double)8.0F), PenguinEntity.PICKABLE_DROP_FILTER);
+                    List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().inflate(range), itemFilter);
                     return !list.isEmpty() && PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty();
                 }
             }
@@ -667,23 +652,23 @@ public class PenguinEntity extends Animal
 
         public void tick()
         {
-            List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().expandTowards((double)8.0F, (double)8.0F, (double)8.0F), PenguinEntity.PICKABLE_DROP_FILTER);
+            List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().inflate(range), itemFilter);
 
             ItemStack itemStack = PenguinEntity.this.getItemBySlot(EquipmentSlot.MAINHAND);
 
             if (itemStack.isEmpty() && !list.isEmpty())
             {
-                PenguinEntity.this.getNavigation().moveTo(list.get(0), (double)1.2F);
+                PenguinEntity.this.getNavigation().moveTo((Entity)list.get(0), speedModifier);
             }
         }
 
         public void start()
         {
-            List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().expandTowards((double)8.0F, (double)8.0F, (double)8.0F), PenguinEntity.PICKABLE_DROP_FILTER);
+            List<ItemEntity> list = PenguinEntity.this.level().getEntitiesOfClass(ItemEntity.class, PenguinEntity.this.getBoundingBox().inflate(range), itemFilter);
 
             if (!list.isEmpty())
             {
-                PenguinEntity.this.getNavigation().moveTo(list.get(0), (double)1.2F);
+                PenguinEntity.this.getNavigation().moveTo((Entity)list.get(0), speedModifier);
             }
         }
     }
