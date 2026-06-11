@@ -1,7 +1,9 @@
 package com.victor.ambient_creatures.entity;
 
 import com.victor.ambient_creatures.AmbientCreatures;
+import com.victor.ambient_creatures.entity.client.capybara.CapybaraRenderer;
 import com.victor.ambient_creatures.entity.client.penguin.PenguinRenderer;
+import com.victor.ambient_creatures.entity.custom.Capybara;
 import com.victor.ambient_creatures.entity.custom.Penguin;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -17,8 +19,13 @@ import net.minecraft.world.entity.MobCategory;
 public class ModEntities
 {
     public static final EntityType<Penguin> PENGUIN = register("penguin",
-            EntityType.Builder.of(Penguin::new, MobCategory.AMBIENT)
+            EntityType.Builder.of(Penguin::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.0f)
+    );
+
+    public static final EntityType<Capybara> CAPYBARA = register("capybara",
+            EntityType.Builder.of(Capybara::new, MobCategory.CREATURE)
+                    .sized(1.0f, 1.0f)
     );
 
     public static void registerModEntities()
@@ -30,6 +37,7 @@ public class ModEntities
         ModEntityModelLayers.registerModelLayers();
 
         EntityRenderers.register(PENGUIN, PenguinRenderer::new);
+        EntityRenderers.register(CAPYBARA, CapybaraRenderer::new);
     }
 
     private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
@@ -47,5 +55,6 @@ public class ModEntities
     public static void registerAttributes()
     {
         FabricDefaultAttributeRegistry.register(PENGUIN, Penguin.createAttributes());
+        FabricDefaultAttributeRegistry.register(CAPYBARA, Capybara.createAttributes());
     }
 }

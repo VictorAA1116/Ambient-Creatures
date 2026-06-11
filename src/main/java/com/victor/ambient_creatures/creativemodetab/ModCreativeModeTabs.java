@@ -22,17 +22,19 @@ public class ModCreativeModeTabs
                     .displayItems((parameters, output) -> {
 
                         output.accept(ModItems.PENGUIN_SPAWN_EGG);
+                        output.accept(ModItems.CAPYBARA_SPAWN_EGG);
 
                     }).build());
 
     public static void modifyTabs()
     {
         // Spawn Eggs Tab
-        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(entries ->
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.SPAWN_EGGS).register(entries -> {
 
-                entries.insertAfter(Items.POLAR_BEAR_SPAWN_EGG, ModItems.PENGUIN_SPAWN_EGG)
+            entries.insertAfter(Items.POLAR_BEAR_SPAWN_EGG, ModItems.PENGUIN_SPAWN_EGG);
+            entries.insertAfter(Items.AXOLOTL_SPAWN_EGG, ModItems.CAPYBARA_SPAWN_EGG);
 
-        );
+        });
     }
 
     public static void registerCreativeModeTabs()

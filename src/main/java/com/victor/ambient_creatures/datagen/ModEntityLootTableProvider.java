@@ -39,15 +39,15 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
                         )
         );
 
-//        this.add(ModEntities.CAPYBARA,
-//                LootTable.lootTable()
-//                        .pool(LootPool.lootPool()
-//                                .setRolls(ConstantValue.exactly(1))
-//                                .add(LootItem.lootTableItem(Items.SEAGRASS))
-//                                .add(LootItem.lootTableItem(Items.KELP))
-//                                .when(LootItemKilledByPlayerCondition.killedByPlayer())
-//                                .build()
-//                        )
-//        );
+        this.add(ModEntities.CAPYBARA,
+                LootTable.lootTable()
+                        .pool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(Items.SEAGRASS))
+                                .add(LootItem.lootTableItem(Items.KELP))
+                                .when(LootItemKilledByPlayerCondition.killedByPlayer())
+                                .build()
+                        )
+        );
     }
 }

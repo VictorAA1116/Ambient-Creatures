@@ -101,7 +101,7 @@ public class PenguinModel extends EntityModel<PenguinRenderState>
             float limbSwingAnimationProgress = state.walkAnimationPos;
 
             // adjustable parameters for walk animation, can be used to make the limbs swing faster/slower and with more/less intensity
-            float limbSwingSpeed = 2.0f;
+            float limbSwingSpeed = 3.0f;
             float limbSwingAmount = 2.5f;
 
             this.walkingAnimation.applyWalk(limbSwingAnimationProgress, limbSwingAmplitude, limbSwingSpeed, limbSwingAmount);

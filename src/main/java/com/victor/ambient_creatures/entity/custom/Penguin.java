@@ -92,13 +92,13 @@ public class Penguin extends Animal
         super.registerGoals();
 
         this.goalSelector.addGoal(0, new BreathAirGoal(this));
-        this.goalSelector.addGoal(1, new PanicGoal(this, 1.5));
+        this.goalSelector.addGoal(0, new PanicGoal(this, 1.5));
+        this.goalSelector.addGoal(1, new PenguinPickupItemGoal(PICKABLE_DROP_FILTER, 10.0D, 1.2D));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Salmon.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Cod.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, TropicalFish.class, true));
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Pufferfish.class, true));
         this.goalSelector.addGoal(3, new BreedGoal(this, 1.15));
-        this.goalSelector.addGoal(3, new PenguinPickupItemGoal(PICKABLE_DROP_FILTER, 10.0D, 1.2D));
         this.goalSelector.addGoal(4, new TemptGoal(this, 1, (stack) -> stack.is(ModTags.Items.PENGUIN_FOODS), false));
         this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1));
@@ -111,7 +111,7 @@ public class Penguin extends Animal
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder)
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder)
     {
         super.defineSynchedData(builder);
 
