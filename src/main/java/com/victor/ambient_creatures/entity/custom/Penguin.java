@@ -23,14 +23,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.fish.Cod;
-import net.minecraft.world.entity.animal.fish.Pufferfish;
-import net.minecraft.world.entity.animal.fish.Salmon;
-import net.minecraft.world.entity.animal.fish.TropicalFish;
+import net.minecraft.world.entity.animal.fish.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -94,20 +93,24 @@ public class Penguin extends Animal
         this.goalSelector.addGoal(0, new BreathAirGoal(this));
         this.goalSelector.addGoal(0, new PanicGoal(this, 1.5));
         this.goalSelector.addGoal(1, new PenguinPickupItemGoal(PICKABLE_DROP_FILTER, 10.0D, 1.2D));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Salmon.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Cod.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, TropicalFish.class, true));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Pufferfish.class, true));
-        this.goalSelector.addGoal(3, new BreedGoal(this, 1.15));
-        this.goalSelector.addGoal(4, new TemptGoal(this, 1, (stack) -> stack.is(ModTags.Items.PENGUIN_FOODS), false));
-        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(2, new BreedGoal(this, 1.15));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1, (stack) -> stack.is(ModTags.Items.PENGUIN_FOODS), false));
+        this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 1.5, true));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1));
         this.goalSelector.addGoal(7, new TryFindWaterGoal(this));
         this.goalSelector.addGoal(8, new RandomSwimmingGoal(this, 1, 1));
         this.goalSelector.addGoal(8, new WanderInWaterGoal(this, 1.1));
-        this.goalSelector.addGoal(10, new MeleeAttackGoal(this, 1.5, true));
-        this.goalSelector.addGoal(11, new LookAtPlayerGoal(this, Player.class, 4));
-        this.goalSelector.addGoal(12, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 4));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+
+        this.targetSelector.addGoal(0, new NearestAttackableTargetGoal<>(
+                this, AbstractFish.class, 100, false, false,
+                (target, level) ->
+                        target instanceof AbstractSchoolingFish
+                        && this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()
+                        && !this.isBaby())
+        );
     }
 
     @Override
@@ -426,11 +429,20 @@ public class Penguin extends Animal
                 this.level().broadcastEntityEvent(this, (byte)45);
             }
         }
+        else if (canSpit(itemStack))
+        {
+            this.spit(itemStack);
+        }
     }
 
     private boolean canEat(ItemStack itemStack)
     {
         return itemStack.has(DataComponents.FOOD) && itemStack.has(DataComponents.CONSUMABLE) && this.getTarget() == null;
+    }
+
+    private boolean canSpit(ItemStack itemStack)
+    {
+        return this.eatingTime > 200 && this.getTarget() == null && !itemStack.has(DataComponents.FOOD) && !itemStack.has(DataComponents.CONSUMABLE);
     }
 
     @Override
@@ -440,24 +452,39 @@ public class Penguin extends Animal
     }
 
     @Override
-    public void handleEntityEvent(byte status)
+    public void handleEntityEvent(final byte id)
     {
-        if (status == 45)
+        // Play eating particle effects when eating
+        if (id == 45)
         {
-            ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
+            ItemStack mouthItem = this.getItemBySlot(EquipmentSlot.MAINHAND);
 
-            if (itemStack.isEmpty())
+            if (!mouthItem.isEmpty())
             {
+                ItemParticleOption breakParticle = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(mouthItem));
+
                 for (int i = 0; i < 8; i++)
                 {
-                    Vec3 vec3 = (new Vec3(((double)this.random.nextFloat() - (double)0.5F) * 0.1, Math.random() * 0.1 + 0.1, (double)0.0F)).xRot(-this.getXRot() * ((float)Math.PI / 180F)).yRot(-this.getYRot() * ((float)Math.PI / 180F));
-                    this.level().addParticle(new ItemParticleOption(ParticleTypes.ITEM, itemStack.getItem()), this.getX() + this.getLookAngle().x / (double)2.0F, this.getY(), this.getZ() + this.getLookAngle().z / (double)2.0F, vec3.x, vec3.y + 0.05, vec3.z);
+                    Vec3 direction = new Vec3((this.random.nextFloat() - 0.5) * 0.1, this.random.nextFloat() * 0.1 + 0.1, 0.0F)
+                            .xRot(-this.getXRot() * (float) (Math.PI / 180.0))
+                            .yRot(-this.getYRot() * (float) (Math.PI / 180.0));
+
+                    this.level()
+                            .addParticle(
+                                    breakParticle,
+                                    this.getX() + this.getLookAngle().x / (double)2.0F,
+                                    this.getY(),
+                                    this.getZ() + this.getLookAngle().z / (double)2.0F,
+                                    direction.x,
+                                    direction.y + 0.05,
+                                    direction.z
+                            );
                 }
             }
         }
         else
         {
-            super.handleEntityEvent(status);
+            super.handleEntityEvent(id);
         }
     }
 
@@ -540,7 +567,7 @@ public class Penguin extends Animal
     {
         ItemStack equippedItemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
 
-        return equippedItemStack.isEmpty() || this.eatingTime > 0 && stack.has(DataComponents.FOOD) && !equippedItemStack.has(DataComponents.FOOD) && equippedItemStack.is(ModTags.Items.PENGUIN_FOODS);
+        return this.eatingTime > 0 && equippedItemStack.isEmpty() && stack.is(ModTags.Items.PENGUIN_FOODS);
     }
 
     private void spit(ItemStack stack)
@@ -566,33 +593,28 @@ public class Penguin extends Animal
     {
         ItemStack itemStack = itemEntity.getItem();
 
-        if (this.canPickupItem(itemStack))
+        if (!this.canPickupItem(itemStack)) return;
+
+        int i = itemStack.getCount();
+
+        if (i > 1)
         {
-            int i = itemStack.getCount();
-
-            if (i > 1)
-            {
-                this.dropItem(itemStack.split(i - 1));
-            }
-
-            if (!this.level().isClientSide())
-            {
-                System.out.println("Server: Penguin looted item " + itemStack + " at tick " + this.age);
-                System.out.println("Thread: " + Thread.currentThread().getName());
-            }
-
-            this.spit(this.getItemBySlot(EquipmentSlot.MAINHAND));
-            this.onItemPickup(itemEntity);
-            this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.split(1));
-            this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
-            this.take(itemEntity, itemStack.getCount());
-            itemEntity.discard();
-            this.eatingTime = 0;
+            this.dropItem(itemStack.split(i - 1));
         }
-        else
+
+        if (!this.level().isClientSide())
         {
-            super.pickUpItem(level, itemEntity);
+            System.out.println("Server: Penguin looted item " + itemStack + " at tick " + this.age);
+            System.out.println("Thread: " + Thread.currentThread().getName());
         }
+
+        this.spit(this.getItemBySlot(EquipmentSlot.MAINHAND));
+        this.onItemPickup(itemEntity);
+        this.setItemSlot(EquipmentSlot.MAINHAND, itemStack.split(1));
+        this.setGuaranteedDrop(EquipmentSlot.MAINHAND);
+        this.take(itemEntity, itemStack.getCount());
+        itemEntity.discard();
+        this.eatingTime = 0;
     }
 
     @Override

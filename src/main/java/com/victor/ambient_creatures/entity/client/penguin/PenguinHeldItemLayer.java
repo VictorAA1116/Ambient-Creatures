@@ -56,11 +56,11 @@ public class PenguinHeldItemLayer extends RenderLayer<PenguinRenderState, Pengui
             {
                 if (isSliding)
                 {
-                    poseStack.translate(0.0F, -0.55F, -0.1F);
+                    poseStack.translate(0.0F, -0.25F, -0.075F);
                 }
                 else
                 {
-                    poseStack.translate(0.0F, 0.1F, -0.55F);
+                    poseStack.translate(0.0F, 0.075F, -0.25F);
                 }
             }
             else if (isSliding)
@@ -76,13 +76,6 @@ public class PenguinHeldItemLayer extends RenderLayer<PenguinRenderState, Pengui
             if (!isSliding)
             {
                 poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            }
-
-            // Adjust scaling of item based on baby status
-            if (state.isBaby)
-            {
-                float babyScale = 2.0F;
-                poseStack.scale(babyScale, babyScale, babyScale);
             }
 
             itemRenderState.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);

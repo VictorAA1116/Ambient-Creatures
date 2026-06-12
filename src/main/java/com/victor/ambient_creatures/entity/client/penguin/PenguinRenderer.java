@@ -3,7 +3,10 @@ package com.victor.ambient_creatures.entity.client.penguin;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.victor.ambient_creatures.AmbientCreatures;
 import com.victor.ambient_creatures.entity.ModEntityModelLayers;
+import com.victor.ambient_creatures.entity.client.penguin.adult.AdultPenguinModel;
+import com.victor.ambient_creatures.entity.client.penguin.baby.BabyPenguinModel;
 import com.victor.ambient_creatures.entity.custom.Penguin;
+import net.minecraft.client.model.AdultAndBabyModelPair;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
@@ -13,14 +16,25 @@ import net.minecraft.resources.Identifier;
 
 public class PenguinRenderer extends MobRenderer<Penguin, PenguinRenderState, PenguinModel>
 {
-    private static final Identifier TEXTURE_PATH = Identifier.fromNamespaceAndPath(AmbientCreatures.MOD_ID, "textures/entity/penguin/penguin.png");
+    private final AdultAndBabyModelPair<PenguinModel> models;
+    private static final Identifier ADULT_TEXTURE_PATH = Identifier.fromNamespaceAndPath(AmbientCreatures.MOD_ID, "textures/entity/penguin/adult_penguin.png");
+    private static final Identifier BABY_TEXTURE_PATH = Identifier.fromNamespaceAndPath(AmbientCreatures.MOD_ID, "textures/entity/penguin/baby_penguin.png");
     private static final float shadowSize = 0.3F;
 
     public PenguinRenderer(EntityRendererProvider.Context context)
     {
-        super(context, new PenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN)), shadowSize);
+        super(context, new AdultPenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN_ADULT)), shadowSize);
+        this.models = bakeModels(context);
 
         this.addLayer(new PenguinHeldItemLayer(this));
+    }
+
+    private static AdultAndBabyModelPair<PenguinModel> bakeModels(final EntityRendererProvider.Context context)
+    {
+        return new AdultAndBabyModelPair<>(
+                new AdultPenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN_ADULT)),
+                new BabyPenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN_BABY))
+        );
     }
 
     @Override
@@ -32,20 +46,13 @@ public class PenguinRenderer extends MobRenderer<Penguin, PenguinRenderState, Pe
     @Override
     public Identifier getTextureLocation(PenguinRenderState state)
     {
-        return TEXTURE_PATH;
+        return state.isBaby? BABY_TEXTURE_PATH : ADULT_TEXTURE_PATH;
     }
 
     @Override
     public void submit(final PenguinRenderState state, final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final CameraRenderState camera)
     {
-        if (state.isBaby)
-        {
-            poseStack.scale(0.5F, 0.5F, 0.5F);
-        }
-        else
-        {
-            poseStack.scale(1.0F, 1.0F, 1.0F);
-        }
+        this.model = this.models.getModel(state.isBaby);
 
         super.submit(state, poseStack, submitNodeCollector, camera);
     }
