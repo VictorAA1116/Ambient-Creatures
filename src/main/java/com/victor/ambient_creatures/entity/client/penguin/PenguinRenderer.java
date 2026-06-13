@@ -23,7 +23,7 @@ public class PenguinRenderer extends MobRenderer<Penguin, PenguinRenderState, Pe
 
     public PenguinRenderer(EntityRendererProvider.Context context)
     {
-        super(context, new AdultPenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN_ADULT)), shadowSize);
+        super(context, new AdultPenguinModel(context.bakeLayer(ModEntityModelLayers.ADULT_PENGUIN)), shadowSize);
         this.models = bakeModels(context);
 
         this.addLayer(new PenguinHeldItemLayer(this));
@@ -32,8 +32,8 @@ public class PenguinRenderer extends MobRenderer<Penguin, PenguinRenderState, Pe
     private static AdultAndBabyModelPair<PenguinModel> bakeModels(final EntityRendererProvider.Context context)
     {
         return new AdultAndBabyModelPair<>(
-                new AdultPenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN_ADULT)),
-                new BabyPenguinModel(context.bakeLayer(ModEntityModelLayers.PENGUIN_BABY))
+                new AdultPenguinModel(context.bakeLayer(ModEntityModelLayers.ADULT_PENGUIN)),
+                new BabyPenguinModel(context.bakeLayer(ModEntityModelLayers.BABY_PENGUIN))
         );
     }
 

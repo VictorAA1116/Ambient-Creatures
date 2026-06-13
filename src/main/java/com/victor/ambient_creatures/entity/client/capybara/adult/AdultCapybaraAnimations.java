@@ -1,4 +1,4 @@
-package com.victor.ambient_creatures.entity.client.capybara;
+package com.victor.ambient_creatures.entity.client.capybara.adult;
 
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -6,7 +6,7 @@ import net.minecraft.client.animation.Keyframe;
 import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.geom.PartNames;
 
-public class CapybaraAnimations
+public class AdultCapybaraAnimations
 {
 
     public static final AnimationDefinition IDLE = AnimationDefinition.Builder.withLength(10f)

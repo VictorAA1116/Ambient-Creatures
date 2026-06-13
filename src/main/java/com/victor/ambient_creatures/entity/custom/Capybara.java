@@ -1,6 +1,7 @@
 package com.victor.ambient_creatures.entity.custom;
 
 import com.victor.ambient_creatures.entity.ModEntities;
+import com.victor.ambient_creatures.entity.client.ai.goal.TamableFollowParentGoal;
 import com.victor.ambient_creatures.util.ModTags;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -25,6 +26,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+
+import java.util.List;
 
 public class Capybara extends TamableAnimal
 {
@@ -52,6 +55,7 @@ public class Capybara extends TamableAnimal
                 .add(Attributes.FOLLOW_RANGE, 20)
                 .add(Attributes.WATER_MOVEMENT_EFFICIENCY, 5)
                 .add(Attributes.TEMPT_RANGE, 20)
+                .add(Attributes.STEP_HEIGHT, 1)
         ;
     }
 
@@ -68,7 +72,7 @@ public class Capybara extends TamableAnimal
         this.goalSelector.addGoal(3, new FollowOwnerGoal(this, 1.5F, 10F, 2F));
         this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, Ingredient.of(Items.MELON_SLICE), false));
         this.goalSelector.addGoal(4, new TemptGoal(this, 1.25D, (stack) -> stack.is(ModTags.Items.CAPYBARA_FOODS), false));
-        this.goalSelector.addGoal(5, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.addGoal(5, new TamableFollowParentGoal(this, 1.1D));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1.0D));
         this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 4.0F));
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));

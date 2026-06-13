@@ -2,6 +2,8 @@ package com.victor.ambient_creatures.entity;
 
 import com.victor.ambient_creatures.AmbientCreatures;
 import com.victor.ambient_creatures.entity.client.capybara.CapybaraModel;
+import com.victor.ambient_creatures.entity.client.capybara.adult.AdultCapybaraModel;
+import com.victor.ambient_creatures.entity.client.capybara.baby.BabyCapybaraModel;
 import com.victor.ambient_creatures.entity.client.penguin.adult.AdultPenguinModel;
 import com.victor.ambient_creatures.entity.client.penguin.baby.BabyPenguinModel;
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
@@ -10,9 +12,13 @@ import net.minecraft.resources.Identifier;
 
 public class ModEntityModelLayers
 {
-    public static final ModelLayerLocation PENGUIN_ADULT = createMain("adult_penguin");
-    public static final ModelLayerLocation PENGUIN_BABY = createMain("baby_penguin");
-    public static final ModelLayerLocation CAPYBARA =  createMain("capybara");
+    // Penguin
+    public static final ModelLayerLocation ADULT_PENGUIN = createMain("adult_penguin");
+    public static final ModelLayerLocation BABY_PENGUIN = createMain("baby_penguin");
+
+    // Capybara
+    public static final ModelLayerLocation ADULT_CAPYBARA =  createMain("adult_capybara");
+    public static final ModelLayerLocation BABY_CAPYBARA =  createMain("baby_capybara");
 
     private static ModelLayerLocation createMain(String name)
     {
@@ -21,9 +27,13 @@ public class ModEntityModelLayers
 
     public static void registerModelLayers()
     {
-        ModelLayerRegistry.registerModelLayer(PENGUIN_ADULT, AdultPenguinModel::getTexturedModelData);
-        ModelLayerRegistry.registerModelLayer(PENGUIN_BABY, BabyPenguinModel::getTexturedModelData);
+        // Penguin
+        ModelLayerRegistry.registerModelLayer(ADULT_PENGUIN, AdultPenguinModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BABY_PENGUIN, BabyPenguinModel::getTexturedModelData);
 
-        ModelLayerRegistry.registerModelLayer(CAPYBARA, CapybaraModel::getTexturedModelData);
+        // Capybara
+        ModelLayerRegistry.registerModelLayer(ADULT_CAPYBARA, AdultCapybaraModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BABY_CAPYBARA, BabyCapybaraModel::getTexturedModelData);
+
     }
 }
