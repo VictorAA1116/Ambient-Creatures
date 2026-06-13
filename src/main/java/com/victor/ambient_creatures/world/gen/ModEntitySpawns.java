@@ -1,8 +1,8 @@
 package com.victor.ambient_creatures.world.gen;
 
-import com.victor.ambient_creatures.entity.ModEntities;
-import com.victor.ambient_creatures.entity.custom.Capybara;
-import com.victor.ambient_creatures.entity.custom.Penguin;
+import com.victor.ambient_creatures.world.entity.ModEntities;
+import com.victor.ambient_creatures.world.entity.animal.Capybara;
+import com.victor.ambient_creatures.world.entity.animal.Penguin;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.core.BlockPos;

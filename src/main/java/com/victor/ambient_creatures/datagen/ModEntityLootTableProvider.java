@@ -1,6 +1,6 @@
 package com.victor.ambient_creatures.datagen;
 
-import com.victor.ambient_creatures.entity.ModEntities;
+import com.victor.ambient_creatures.world.entity.ModEntities;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricEntityLootSubProvider;
 import net.minecraft.core.HolderLookup;

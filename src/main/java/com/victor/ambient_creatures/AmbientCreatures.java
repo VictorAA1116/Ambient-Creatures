@@ -1,7 +1,7 @@
 package com.victor.ambient_creatures;
 
 import com.victor.ambient_creatures.creativemodetab.ModCreativeModeTabs;
-import com.victor.ambient_creatures.entity.ModEntities;
+import com.victor.ambient_creatures.world.entity.ModEntities;
 import com.victor.ambient_creatures.item.ModItems;
 import com.victor.ambient_creatures.sound.ModSounds;
 import com.victor.ambient_creatures.world.gen.ModWorldGeneration;

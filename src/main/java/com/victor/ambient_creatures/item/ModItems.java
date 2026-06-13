@@ -1,14 +1,12 @@
 package com.victor.ambient_creatures.item;
 
 import com.victor.ambient_creatures.AmbientCreatures;
-import com.victor.ambient_creatures.entity.ModEntities;
-import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import com.victor.ambient_creatures.world.entity.ModEntities;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.SpawnEggItem;
 
