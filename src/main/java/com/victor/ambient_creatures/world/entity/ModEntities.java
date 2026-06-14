@@ -1,10 +1,12 @@
 package com.victor.ambient_creatures.world.entity;
 
 import com.victor.ambient_creatures.AmbientCreatures;
+import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import com.victor.ambient_creatures.world.entity.client.capybara.CapybaraRenderer;
 import com.victor.ambient_creatures.world.entity.client.penguin.PenguinRenderer;
 import com.victor.ambient_creatures.world.entity.animal.Capybara;
 import com.victor.ambient_creatures.world.entity.animal.Penguin;
+import com.victor.ambient_creatures.world.entity.client.raccoon.RaccoonRenderer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.core.Registry;
@@ -18,14 +20,19 @@ import net.minecraft.world.entity.MobCategory;
 
 public class ModEntities
 {
+    public static final EntityType<Capybara> CAPYBARA = register("capybara",
+            EntityType.Builder.of(Capybara::new, MobCategory.CREATURE)
+                    .sized(1.0f, 1.0f)
+    );
+
     public static final EntityType<Penguin> PENGUIN = register("penguin",
             EntityType.Builder.of(Penguin::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.0f)
     );
 
-    public static final EntityType<Capybara> CAPYBARA = register("capybara",
-            EntityType.Builder.of(Capybara::new, MobCategory.CREATURE)
-                    .sized(1.0f, 1.0f)
+    public static final EntityType<Raccoon> RACCOON = register("raccoon",
+            EntityType.Builder.of(Raccoon::new, MobCategory.CREATURE)
+                    .sized(0.7f, 0.6f)
     );
 
     public static void registerModEntities()
@@ -36,8 +43,9 @@ public class ModEntities
         registerAttributes();
         ModEntityModelLayers.registerModelLayers();
 
-        EntityRenderers.register(PENGUIN, PenguinRenderer::new);
         EntityRenderers.register(CAPYBARA, CapybaraRenderer::new);
+        EntityRenderers.register(PENGUIN, PenguinRenderer::new);
+        EntityRenderers.register(RACCOON, RaccoonRenderer::new);
     }
 
     private static <T extends Entity> EntityType<T> register(String name, EntityType.Builder<T> builder)
@@ -54,7 +62,8 @@ public class ModEntities
 
     public static void registerAttributes()
     {
-        FabricDefaultAttributeRegistry.register(PENGUIN, Penguin.createAttributes());
         FabricDefaultAttributeRegistry.register(CAPYBARA, Capybara.createAttributes());
+        FabricDefaultAttributeRegistry.register(PENGUIN, Penguin.createAttributes());
+        FabricDefaultAttributeRegistry.register(RACCOON, Raccoon.createAttributes());
     }
 }

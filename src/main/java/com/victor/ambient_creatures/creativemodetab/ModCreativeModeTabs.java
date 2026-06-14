@@ -21,8 +21,9 @@ public class ModCreativeModeTabs
                     .title(Component.translatable("creativemodetab.ambient_creatures.ambient_creatures"))
                     .displayItems((parameters, output) -> {
 
-                        output.accept(ModItems.PENGUIN_SPAWN_EGG);
                         output.accept(ModItems.CAPYBARA_SPAWN_EGG);
+                        output.accept(ModItems.PENGUIN_SPAWN_EGG);
+                        output.accept(ModItems.RACCOON_SPAWN_EGG);
 
                     }).build());
 
@@ -33,6 +34,7 @@ public class ModCreativeModeTabs
 
             entries.insertAfter(Items.POLAR_BEAR_SPAWN_EGG, ModItems.PENGUIN_SPAWN_EGG);
             entries.insertAfter(Items.AXOLOTL_SPAWN_EGG, ModItems.CAPYBARA_SPAWN_EGG);
+            entries.insertAfter(Items.FOX_SPAWN_EGG, ModItems.RACCOON_SPAWN_EGG);
 
         });
     }

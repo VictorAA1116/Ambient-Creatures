@@ -51,13 +51,8 @@ public class PenguinModel extends EntityModel<PenguinRenderState>
 
     private void setHeadAngles(float headYaw, float headPitch, boolean isLayingDown)
     {
-        headYaw = Mth.clamp(headYaw, -30.0f, 30.0f);
-        headPitch = Mth.clamp(headPitch, -25.0f, 45.0f);
-
-//        if (isLayingDown)
-//        {
-//            headPitch -= 90f;
-//        }
+//        headYaw = Mth.clamp(headYaw, -30.0f, 30.0f);
+//        headPitch = Mth.clamp(headPitch, -25.0f, 45.0f);
 
         this.head.xRot = headPitch * (float)(Math.PI / 180.0F);
 

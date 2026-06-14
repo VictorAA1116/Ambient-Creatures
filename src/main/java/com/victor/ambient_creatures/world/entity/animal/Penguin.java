@@ -62,7 +62,7 @@ public class Penguin extends Animal
     private int slidingCooldown = 0;
     private int eatingTime = 0;
     public BlockPos travelPos;
-    boolean landBound;
+
     private static final Predicate<ItemEntity> PICKABLE_DROP_FILTER;
 
     public Penguin(EntityType<? extends Animal> type, Level level)
@@ -86,7 +86,8 @@ public class Penguin extends Animal
     }
 
     @Override
-    protected void registerGoals() {
+    protected void registerGoals()
+    {
         super.registerGoals();
 
         this.goalSelector.addGoal(0, new BreathAirGoal(this));

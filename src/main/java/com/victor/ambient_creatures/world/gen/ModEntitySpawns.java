@@ -3,6 +3,7 @@ package com.victor.ambient_creatures.world.gen;
 import com.victor.ambient_creatures.world.entity.ModEntities;
 import com.victor.ambient_creatures.world.entity.animal.Capybara;
 import com.victor.ambient_creatures.world.entity.animal.Penguin;
+import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.core.BlockPos;
@@ -17,6 +18,22 @@ import net.minecraft.world.level.levelgen.Heightmap;
 
 public class ModEntitySpawns
 {
+    public static boolean canCapybaraSpawn(EntityType<Capybara> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
+    {
+
+        if (Animal.checkAnimalSpawnRules(type, level,spawnReason, blockPos, random))
+        {
+            return true;
+        }
+
+        if (level.getBlockState(blockPos).getBlock() == Blocks.WATER && level.getBlockState(blockPos.above()).isAir())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     public static boolean canPenguinSpawn(EntityType<Penguin> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
     {
         BlockState stateBelow = level.getBlockState(blockPos.below());
@@ -39,15 +56,9 @@ public class ModEntitySpawns
         return false;
     }
 
-    public static boolean canCapybaraSpawn(EntityType<Capybara> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
+    public static boolean canRaccoonSpawn(EntityType<Raccoon> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
     {
-
-        if (Animal.checkAnimalSpawnRules(type, level,spawnReason, blockPos, random))
-        {
-            return true;
-        }
-
-        if (level.getBlockState(blockPos).getBlock() == Blocks.WATER && level.getBlockState(blockPos.above()).isAir())
+        if (Animal.checkAnimalSpawnRules(type, level, spawnReason, blockPos, random))
         {
             return true;
         }
@@ -86,5 +97,20 @@ public class ModEntitySpawns
         );
 
         SpawnPlacements.register(ModEntities.PENGUIN, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntitySpawns::canPenguinSpawn);
+
+        // Raccoon Spawns
+        BiomeModifications.addSpawn(
+                BiomeSelectors.includeByKey(
+                        Biomes.FOREST,
+                        Biomes.BIRCH_FOREST,
+                        Biomes.DARK_FOREST,
+                        Biomes.FLOWER_FOREST,
+                        Biomes.OLD_GROWTH_BIRCH_FOREST,
+                        Biomes.RIVER
+                ),
+                MobCategory.CREATURE, ModEntities.RACCOON, 30, 1, 3
+        );
+
+        SpawnPlacements.register(ModEntities.RACCOON, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntitySpawns::canRaccoonSpawn);
     }
 }

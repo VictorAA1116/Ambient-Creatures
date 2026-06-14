@@ -44,10 +44,7 @@ public class PenguinRenderer extends MobRenderer<Penguin, PenguinRenderState, Pe
     }
 
     @Override
-    public Identifier getTextureLocation(PenguinRenderState state)
-    {
-        return state.isBaby? BABY_TEXTURE_PATH : ADULT_TEXTURE_PATH;
-    }
+    public Identifier getTextureLocation(PenguinRenderState state) { return state.isBaby? BABY_TEXTURE_PATH : ADULT_TEXTURE_PATH; }
 
     @Override
     public void submit(final PenguinRenderState state, final PoseStack poseStack, final SubmitNodeCollector submitNodeCollector, final CameraRenderState camera)

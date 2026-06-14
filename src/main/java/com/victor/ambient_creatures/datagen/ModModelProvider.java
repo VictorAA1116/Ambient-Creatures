@@ -19,7 +19,8 @@ public class ModModelProvider extends FabricModelProvider
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerators)
     {
-        itemModelGenerators.generateFlatItem(ModItems.PENGUIN_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.CAPYBARA_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.PENGUIN_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.RACCOON_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
     }
 }

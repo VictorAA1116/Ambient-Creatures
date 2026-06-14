@@ -1,9 +1,12 @@
 {
+  "item.ambient_creatures.capybara_spawn_egg": "Capybara Spawn Egg",
+  "entity.ambient_creatures.capybara": "Capybara",
+
   "item.ambient_creatures.penguin_spawn_egg": "Penguin Spawn Egg",
   "entity.ambient_creatures.penguin": "Penguin",
 
-  "item.ambient_creatures.capybara_spawn_egg": "Capybara Spawn Egg",
-  "entity.ambient_creatures.capybara": "Capybara",
+  "item.ambient_creatures.raccoon_spawn_egg": "Raccoon Spawn Egg",
+  "entity.ambient_creatures.raccoon": "Raccoon",
 
   "creativemodetab.ambient_creatures.ambient_creatures": "Ambient Creatures"
 }

@@ -28,5 +28,12 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(Items.SALMON)
                 .add(Items.TROPICAL_FISH)
         ;
+
+        valueLookupBuilder(ModTags.Items.RACCOON_FOODS)
+                .add(Items.APPLE)
+                .add(Items.BREAD)
+                .add(Items.CARROT)
+                .add(Items.POTATO)
+        ;
     }
 }

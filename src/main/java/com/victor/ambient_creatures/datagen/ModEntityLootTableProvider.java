@@ -26,6 +26,17 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
     @Override
     public void generate()
     {
+        this.add(ModEntities.CAPYBARA,
+                LootTable.lootTable()
+                        .pool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(Items.SEAGRASS))
+                                .add(LootItem.lootTableItem(Items.KELP))
+                                .when(LootItemKilledByPlayerCondition.killedByPlayer())
+                                .build()
+                        )
+        );
+
         this.add(ModEntities.PENGUIN,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()
@@ -39,12 +50,14 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
                         )
         );
 
-        this.add(ModEntities.CAPYBARA,
+        this.add(ModEntities.RACCOON,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()
                                 .setRolls(ConstantValue.exactly(1))
-                                .add(LootItem.lootTableItem(Items.SEAGRASS))
-                                .add(LootItem.lootTableItem(Items.KELP))
+                                .add(LootItem.lootTableItem(Items.RABBIT_FOOT).setWeight(2)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
+                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 2.0F))))
+                                .add(LootItem.lootTableItem(Items.RABBIT_HIDE))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
                                 .build()
                         )

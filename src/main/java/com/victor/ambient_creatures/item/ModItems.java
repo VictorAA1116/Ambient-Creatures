@@ -14,8 +14,9 @@ import java.util.function.Function;
 
 public class ModItems
 {
-    public static final Item PENGUIN_SPAWN_EGG = registerItem("penguin_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(ModEntities.PENGUIN));
     public static final Item CAPYBARA_SPAWN_EGG = registerItem("capybara_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(ModEntities.CAPYBARA));
+    public static final Item PENGUIN_SPAWN_EGG = registerItem("penguin_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(ModEntities.PENGUIN));
+    public static final Item RACCOON_SPAWN_EGG = registerItem("raccoon_spawn_egg", SpawnEggItem::new, new Item.Properties().spawnEgg(ModEntities.RACCOON));
 
     private static Item registerItem(String name, Function<Item.Properties, Item> function, Item.Properties properties)
     {

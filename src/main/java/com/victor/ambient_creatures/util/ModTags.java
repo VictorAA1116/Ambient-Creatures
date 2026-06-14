@@ -16,6 +16,7 @@ public class ModTags
     {
         public static final TagKey<Item> CAPYBARA_FOODS = createTag("capybara_foods");
         public static final TagKey<Item> PENGUIN_FOODS = createTag("penguin_foods");
+        public static final TagKey<Item> RACCOON_FOODS = createTag("raccoon_foods");
 
         private static TagKey<Item> createTag(String name)
         {

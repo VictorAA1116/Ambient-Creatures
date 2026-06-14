@@ -39,11 +39,12 @@ public class CapybaraModel extends EntityModel<CapybaraRenderState>
         this.setHeadAngles(state.yRot, state.xRot);
     }
 
-    private void setHeadAngles(float headYaw, float headPitch) {
-        headYaw = Mth.clamp(headYaw, -30.0f, 30.0f);
-        headPitch = Mth.clamp(headPitch, -25.0f, 45.0f);
+    private void setHeadAngles(float headYaw, float headPitch)
+    {
+//        headYaw = Mth.clamp(headYaw, -30.0f, 30.0f);
+//        headPitch = Mth.clamp(headPitch, -25.0f, 45.0f);
 
-        this.head.yRot = headYaw * 0.017453292F;
+        this.head.yRot = headYaw * (float)(Math.PI / 180.0);
         this.head.xRot = headPitch * (float) -(Math.PI / 180.0);
     }
 }
