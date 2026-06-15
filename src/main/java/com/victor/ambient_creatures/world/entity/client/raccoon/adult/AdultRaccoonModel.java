@@ -10,7 +10,6 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import org.jspecify.annotations.Nullable;
 
 public class AdultRaccoonModel extends RaccoonModel
 {
@@ -37,32 +36,33 @@ public class AdultRaccoonModel extends RaccoonModel
         PartDefinition root = modelPartDefinition.addOrReplaceChild(PartNames.ROOT, CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         // Body
-        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0, 0).addBox(-4.5F, -4.0F, -6.0F, 9.0F, 6.0F, 12.0F), PartPose.offset(0.0F, -5.0F, 0.0F));
+        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(1, 0).addBox(-4.0F, -4.0F, -6.0F, 8.0F, 6.0F, 12.0F), PartPose.offset(0.0F, -6.0F, 0.0F));
 
         // Head
-        PartDefinition head = body.addOrReplaceChild(PartNames.HEAD, CubeListBuilder.create().texOffs(23, 19).addBox(-3.5F, -2.0F, -4.0F, 7.0F, 4.0F, 5.0F), PartPose.offset(0.0F, -3.0F, -6.0F));
+        PartDefinition head = body.addOrReplaceChild(PartNames.HEAD, CubeListBuilder.create().texOffs(23, 18).addBox(-3.5F, -3.0F, -4.0F, 7.0F, 5.0F, 5.0F), PartPose.offset(0.0F, -2.0F, -6.0F));
 
-        // Ears
-        PartDefinition left_ear = head.addOrReplaceChild(PartNames.LEFT_EAR, CubeListBuilder.create(), PartPose.offset(-2.0F, -1.5F, -0.5F));
+        // Left Ear
+        PartDefinition left_ear = head.addOrReplaceChild(PartNames.LEFT_EAR, CubeListBuilder.create(), PartPose.offset(-2.0F, -2.5F, -0.5F));
         left_ear.addOrReplaceChild("left_ear_r1", CubeListBuilder.create().texOffs(38, 29).addBox(-1.0F, -2.0F, 0.0F, 2.0F, 2.0F, 1.0F), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, -0.3927F));
 
-        PartDefinition right_ear = head.addOrReplaceChild(PartNames.RIGHT_EAR, CubeListBuilder.create(), PartPose.offset(2.0F, -1.5F, -0.5F));
+        // Right Ear
+        PartDefinition right_ear = head.addOrReplaceChild(PartNames.RIGHT_EAR, CubeListBuilder.create(), PartPose.offset(2.0F, -2.5F, -0.5F));
         right_ear.addOrReplaceChild("right_ear_r1", CubeListBuilder.create().texOffs(38, 29).addBox(-1.0F, -2.0F, 0.0F, 2.0F, 2.0F, 1.0F), PartPose.offsetAndRotation(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.3927F));
 
         // Nose
         head.addOrReplaceChild(PartNames.NOSE, CubeListBuilder.create().texOffs(24, 29).addBox(-1.5F, -1.0F, -2.0F, 3.0F, 2.0F, 2.0F), PartPose.offset(0.0F, 1.0F, -4.0F));
 
         // Left Front Leg
-        body.addOrReplaceChild(PartNames.LEFT_FRONT_LEG, CubeListBuilder.create().texOffs(0, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 2.0F), PartPose.offset(2.5F, 2.0F, -4.0F));
+        body.addOrReplaceChild(PartNames.LEFT_FRONT_LEG, CubeListBuilder.create().texOffs(0, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F), PartPose.offset(2.5F, 2.0F, -4.0F));
 
         // Right Front Leg
-        body.addOrReplaceChild(PartNames.RIGHT_FRONT_LEG, CubeListBuilder.create().texOffs(0, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 2.0F), PartPose.offset(-2.5F, 2.0F, -4.0F));
+        body.addOrReplaceChild(PartNames.RIGHT_FRONT_LEG, CubeListBuilder.create().texOffs(0, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F), PartPose.offset(-2.5F, 2.0F, -4.0F));
 
         // Left Hind Leg
-        body.addOrReplaceChild(PartNames.LEFT_HIND_LEG, CubeListBuilder.create().texOffs(9, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 2.0F), PartPose.offset(2.5F, 2.0F, 5.0F));
+        body.addOrReplaceChild(PartNames.LEFT_HIND_LEG, CubeListBuilder.create().texOffs(9, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F), PartPose.offset(2.5F, 1.0F, 4.9F));
 
         // Right Hind Leg
-        body.addOrReplaceChild(PartNames.RIGHT_HIND_LEG, CubeListBuilder.create().texOffs(9, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 2.0F), PartPose.offset(-2.5F, 2.0F, 5.0F));
+        body.addOrReplaceChild(PartNames.RIGHT_HIND_LEG, CubeListBuilder.create().texOffs(9, 31).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 5.0F, 2.0F), PartPose.offset(-2.5F, 1.0F, 4.9F));
 
         // Tail
         body.addOrReplaceChild(PartNames.TAIL, CubeListBuilder.create().texOffs(0, 19).addBox(-2.0F, -2.0F, 0.0F, 4.0F, 4.0F, 7.0F), PartPose.offset(0.0F, -1.0F, 6.0F));
