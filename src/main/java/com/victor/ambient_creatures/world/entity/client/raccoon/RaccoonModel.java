@@ -43,13 +43,14 @@ public class RaccoonModel extends EntityModel<RaccoonRenderState>
         setHeadAngles(state.yRot, state.xRot, state.standingAnimationState.isStarted());
     }
 
-    private void setHeadAngles(float headYaw, float headPitch, boolean isStanding)
+    private void setHeadAngles(float headYaw, float headPitch, final boolean isStanding)
     {
         if (isStanding)
         {
-            headPitch += 25;
-            this.head.zRot = headYaw * 0.5f * (float)(Math.PI / 180.0);
-            this.head.yRot = headYaw * 0.5f * (float)(Math.PI / 180.0);
+            headPitch += 35;
+
+            this.head.zRot = headYaw * 0.7f * (float)(Math.PI / 180.0);
+            this.head.yRot = headYaw * 0.3f * (float)(Math.PI / 180.0);
         }
         else
         {
