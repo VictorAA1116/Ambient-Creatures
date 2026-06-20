@@ -47,7 +47,8 @@ public class RaccoonModel extends EntityModel<RaccoonRenderState>
     {
         if (isStanding)
         {
-            headPitch += 35;
+            //headPitch *= 0.5f;
+            headPitch = Mth.clamp(headPitch, -30, 30);
 
             this.head.zRot = headYaw * 0.7f * (float)(Math.PI / 180.0);
             this.head.yRot = headYaw * 0.3f * (float)(Math.PI / 180.0);

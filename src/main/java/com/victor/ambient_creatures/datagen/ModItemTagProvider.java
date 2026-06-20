@@ -17,23 +17,31 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
     @Override
     protected void addTags(HolderLookup.Provider registries)
     {
-        valueLookupBuilder(ModTags.Items.CAPYBARA_FOODS)
-                .add(Items.SHORT_GRASS)
-                .add(Items.KELP)
-                .add(Items.SEAGRASS)
+        builder(ModTags.Items.CAPYBARA_FOODS)
+                .add(Items.SHORT_GRASS.builtInRegistryHolder().key())
+                .add(Items.KELP.builtInRegistryHolder().key())
+                .add(Items.SEAGRASS.builtInRegistryHolder().key())
         ;
 
-        valueLookupBuilder(ModTags.Items.PENGUIN_FOODS)
-                .add(Items.COD)
-                .add(Items.SALMON)
-                .add(Items.TROPICAL_FISH)
+        builder(ModTags.Items.PENGUIN_FOODS)
+                .add(Items.COD.builtInRegistryHolder().key())
+                .add(Items.SALMON.builtInRegistryHolder().key())
+                .add(Items.TROPICAL_FISH.builtInRegistryHolder().key())
         ;
 
-        valueLookupBuilder(ModTags.Items.RACCOON_FOODS)
-                .add(Items.APPLE)
-                .add(Items.BREAD)
-                .add(Items.CARROT)
-                .add(Items.POTATO)
+        builder(ModTags.Items.RACCOON_FOODS)
+                .add(Items.APPLE.builtInRegistryHolder().key())
+                .add(Items.BREAD.builtInRegistryHolder().key())
+                .add(Items.CARROT.builtInRegistryHolder().key())
+                .add(Items.POTATO.builtInRegistryHolder().key())
+                .add(Items.SWEET_BERRIES.builtInRegistryHolder().key())
+                .add(Items.EGG.builtInRegistryHolder().key())
+                .add(Items.COD.builtInRegistryHolder().key())
+                .add(Items.COOKED_COD.builtInRegistryHolder().key())
+                .add(Items.SALMON.builtInRegistryHolder().key())
+                .add(Items.COOKED_SALMON.builtInRegistryHolder().key())
+                .add(Items.CHICKEN.builtInRegistryHolder().key())
+                .add(Items.COOKED_CHICKEN.builtInRegistryHolder().key())
         ;
     }
 }
