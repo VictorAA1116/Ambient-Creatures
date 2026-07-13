@@ -41,6 +41,10 @@ public class ModEntities
 
         registerModEntityTypes();
         registerAttributes();
+    }
+
+    public static void registerEntityRenderers()
+    {
         ModEntityModelLayers.registerModelLayers();
 
         EntityRenderers.register(CAPYBARA, CapybaraRenderer::new);

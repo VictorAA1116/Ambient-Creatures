@@ -18,6 +18,9 @@
 		"main": [
 			"com.victor.ambient_creatures.AmbientCreatures"
 		],
+		"client": [
+			"com.victor.ambient_creatures.AmbientCreaturesClient"
+		],
 		"fabric-datagen": [
 			"com.victor.ambient_creatures.AmbientCreaturesDataGenerator"
 		]
