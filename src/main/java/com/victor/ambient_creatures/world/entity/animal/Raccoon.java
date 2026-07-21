@@ -261,10 +261,7 @@ public class Raccoon extends Animal
 
 
     @Override
-    public boolean isFood(ItemStack itemStack)
-    {
-        return false;
-    }
+    public boolean isFood(ItemStack itemStack) { return itemStack.is(ModTags.Items.RACCOON_FOODS); }
 
     @Override
     public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner)
