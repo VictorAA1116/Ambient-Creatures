@@ -2,6 +2,7 @@ package com.victor.ambient_creatures.world.entity.animal;
 
 import com.victor.ambient_creatures.util.ModTags;
 import com.victor.ambient_creatures.world.entity.ModEntities;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -14,11 +15,15 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import org.jspecify.annotations.Nullable;
 
-public class Raccoon extends Animal
+public class Raccoon extends Animal implements ContainerUser
 {
     private static final EntityDataAccessor<Boolean> IDLE = SynchedEntityData.defineId(Raccoon.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> WALKING = SynchedEntityData.defineId(Raccoon.class, EntityDataSerializers.BOOLEAN);
@@ -31,6 +36,8 @@ public class Raccoon extends Animal
     public final AnimationState standingAnimationState = new AnimationState();
 
     private int idleAnimationTimeout = 0;
+
+    private @Nullable BlockPos openedChestPos;
 
     public Raccoon(EntityType<? extends Animal> type, Level level)
     {
@@ -268,4 +275,25 @@ public class Raccoon extends Animal
     {
         return ModEntities.RACCOON.create(level, EntitySpawnReason.BREEDING);
     }
+
+    public void setOpenedChestPos(final BlockPos openedChestPos) { this.openedChestPos = openedChestPos; }
+
+    public void clearOpenedChestPos() { this.openedChestPos = null; }
+
+    @Override
+    public boolean hasContainerOpen(ContainerOpenersCounter container, BlockPos blockPos)
+    {
+        if (this.openedChestPos == null)
+        {
+            return false;
+        }
+        else
+        {
+            BlockState blockState = this.level().getBlockState(this.openedChestPos);
+            return this.openedChestPos.equals(blockPos) || blockState.getBlock() instanceof ChestBlock && blockState.getValue(ChestBlock.TYPE) != ChestType.SINGLE && ChestBlock.getConnectedBlockPos(this.openedChestPos, blockState).equals(blockPos);
+        }
+    }
+
+    @Override
+    public double getContainerInteractionRange() { return (double) 5.0F; }
 }
