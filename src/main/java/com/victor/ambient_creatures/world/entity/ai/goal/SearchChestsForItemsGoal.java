@@ -1,63 +1,247 @@
 package com.victor.ambient_creatures.world.entity.ai.goal;
 
+import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 public class SearchChestsForItemsGoal extends Goal
 {
-    PathfinderMob mob;
-    int horizontalRange = 5;
-    int verticalRange = 5;
-
-    public SearchChestsForItemsGoal(PathfinderMob mob, int horizontalRange, int verticalRange)
+    private enum SearchChestsState
     {
-        this.mob = mob;
-        this.horizontalRange = horizontalRange;
-        this.verticalRange = verticalRange;
+        IDLE,
+        TRAVELLING,
+        LOOTING_CHEST,
+        DONE,
     }
 
-    public SearchChestsForItemsGoal(PathfinderMob mob)
+    private final PathfinderMob mob;
+    private final Predicate<ItemStack> items;
+    private final int horizontalRange;
+    private final int verticalRange;
+    private final double speedModifier;
+
+    private SearchChestsState state = SearchChestsState.IDLE;
+    private int cooldownTicks = 0;
+    private int pathRecalcTicks = 0;
+    private int chestOpenTicks = 0;
+    private BlockPos targetChestPos;
+    private ChestBlockEntity targetChest;
+
+    public SearchChestsForItemsGoal(PathfinderMob mob, Predicate<ItemStack> items, int horizontalRange, int verticalRange, double speedModifier)
     {
         this.mob = mob;
+        this.items = items;
+        this.horizontalRange = horizontalRange;
+        this.verticalRange = verticalRange;
+        this.speedModifier = speedModifier;
+        this.setFlags(java.util.EnumSet.of(Goal.Flag.MOVE));
     }
 
     @Override
     public boolean canUse()
     {
-        return false;
+        // Don't search for chests if we already have an item
+        if (!this.mob.getMainHandItem().isEmpty())
+        {
+            return false;
+        }
+
+        if (this.cooldownTicks > 0)
+        {
+            --this.cooldownTicks;
+            return false;
+        }
+
+        return true;
     }
 
-    private BlockPos FindClosestChest()
+    @Override
+    public boolean canContinueToUse()
     {
-        List<ChunkPos> list = ChunkPos.rangeClosed(ChunkPos.containing(mob.blockPosition()), Math.floorDiv(this.horizontalRange, 16) + 1).toList();
-        BlockPos targetPos = null;
+        return this.state != SearchChestsState.IDLE && this.state != SearchChestsState.DONE;
+    }
 
-        double closestDistance = (double)Float.MAX_VALUE;
+    @Override
+    public void start()
+    {
+        this.state = SearchChestsState.TRAVELLING;
+        this.pathRecalcTicks = 0;
+    }
 
-        for(ChunkPos chunkPos : list)
+    @Override
+    public void stop()
+    {
+        // Close the chest properly
+        if (this.targetChest != null && this.mob instanceof Raccoon)
+        {
+            Raccoon raccoon = (Raccoon) this.mob;
+            this.targetChest.stopOpen(raccoon);
+            raccoon.clearOpenedChestPos();
+        }
+
+        this.targetChest = null;
+        this.targetChestPos = null;
+        this.state = SearchChestsState.IDLE;
+        this.cooldownTicks = 60; // 3 second cooldown before trying again
+        this.chestOpenTicks = 0;
+    }
+
+    @Override
+    public void tick()
+    {
+        switch (this.state)
+        {
+            case TRAVELLING:
+                this.travelToChest();
+                break;
+
+            case LOOTING_CHEST:
+                this.lootChest();
+                break;
+
+            case DONE:
+                this.stop();
+                break;
+        }
+    }
+
+    private void travelToChest()
+    {
+        // Recalculate path every 10 ticks
+        if (--this.pathRecalcTicks <= 0)
+        {
+            this.pathRecalcTicks = 10;
+            this.targetChestPos = this.findClosestChest();
+
+            if (this.targetChestPos != null)
+            {
+                // Move towards the chest
+                this.mob.getNavigation().moveTo(
+                        this.targetChestPos.getX() + 0.5,
+                        this.targetChestPos.getY(),
+                        this.targetChestPos.getZ() + 0.5,
+                        this.speedModifier
+                );
+            }
+            else
+            {
+                // No chest found, go idle
+                this.state = SearchChestsState.DONE;
+            }
+        }
+
+        // Check if we've reached the chest
+        if (this.targetChestPos != null)
+        {
+            double distanceSq = this.mob.distanceToSqr(
+                    this.targetChestPos.getX() + 0.5,
+                    this.targetChestPos.getY() + 0.5,
+                    this.targetChestPos.getZ() + 0.5
+            );
+
+            if (distanceSq < 4.0) // Close enough (2 blocks)
+            {
+                this.mob.getNavigation().stop();
+                this.state = SearchChestsState.LOOTING_CHEST;
+                if (this.mob instanceof Raccoon)
+                {
+                    Raccoon raccoon = (Raccoon)this.mob;
+                    raccoon.setOpenedChestPos(this.targetChestPos);
+                }
+            }
+        }
+    }
+
+    private void lootChest()
+    {
+        if (this.targetChest == null || this.targetChestPos == null)
+        {
+            this.state = SearchChestsState.DONE;
+            return;
+        }
+
+        // Open the chest on first interaction
+        if (this.chestOpenTicks == 0 && this.mob instanceof Raccoon)
+        {
+            Raccoon raccoon = (Raccoon) this.mob;
+            this.targetChest.startOpen(raccoon);
+            raccoon.setOpenedChestPos(this.targetChestPos);
+        }
+
+        this.chestOpenTicks++;
+
+        // Take item halfway through the chest open duration (5 ticks)
+        if (this.chestOpenTicks == 5)
+        {
+            ItemStack stolenItem = this.takeItemFromChest(this.targetChest);
+
+            if (!stolenItem.isEmpty())
+            {
+                // Successfully took an item, hold it, and set as a guaranteed drop
+                this.mob.setItemSlot(EquipmentSlot.MAINHAND, stolenItem);
+                this.mob.setGuaranteedDrop(EquipmentSlot.MAINHAND);
+            }
+        }
+
+        // Keep chest open for 10 ticks, then finish
+        if (this.chestOpenTicks >= 10)
+        {
+            this.state = SearchChestsState.DONE;
+            this.chestOpenTicks = 0;
+        }
+    }
+
+    private BlockPos findClosestChest()
+    {
+        List<ChunkPos> chunkList = ChunkPos.rangeClosed(
+                ChunkPos.containing(this.mob.blockPosition()),
+                Math.floorDiv(this.horizontalRange, 16) + 1
+        ).toList();
+
+        BlockPos closestChestPos = null;
+        double closestDistance = Double.MAX_VALUE;
+
+        for (ChunkPos chunkPos : chunkList)
         {
             LevelChunk levelChunk = this.mob.level().getChunkSource().getChunkNow(chunkPos.x(), chunkPos.z());
 
-            if (levelChunk != null)
+            if (levelChunk == null) continue;
+
+            for (BlockEntity blockEntity : levelChunk.getBlockEntities().values())
             {
-                for(BlockEntity potentialTarget : levelChunk.getBlockEntities().values())
+                if (blockEntity instanceof ChestBlockEntity)
                 {
-                    if (potentialTarget instanceof ChestBlockEntity)
+                    ChestBlockEntity chest = (ChestBlockEntity) blockEntity;
+                    BlockPos chestPos = chest.getBlockPos();
+
+                    // Check vertical range
+                    int vertDiff = Math.abs(chestPos.getY() - this.mob.blockPosition().getY());
+                    if (vertDiff > this.verticalRange) continue;
+
+                    double distance = this.mob.distanceToSqr(
+                            chestPos.getX() + 0.5,
+                            chestPos.getY() + 0.5,
+                            chestPos.getZ() + 0.5
+                    );
+
+                    if (distance < closestDistance)
                     {
-                        ChestBlockEntity chestBlockEntity = (ChestBlockEntity)potentialTarget;
-
-                        double distance = chestBlockEntity.getBlockPos().distToCenterSqr(mob.position());
-
-                        if (distance < closestDistance)
+                        // Check if chest has food items
+                        if (this.hasMatchingItems(chest))
                         {
-                            targetPos = chestBlockEntity.getBlockPos();
+                            this.targetChest = chest;
+                            closestChestPos = chestPos;
                             closestDistance = distance;
                         }
                     }
@@ -65,7 +249,39 @@ public class SearchChestsForItemsGoal extends Goal
             }
         }
 
-        return targetPos;
+        return closestChestPos;
     }
 
+    private boolean hasMatchingItems(ChestBlockEntity chest)
+    {
+        for (int i = 0; i < chest.getContainerSize(); i++)
+        {
+            ItemStack stack = chest.getItem(i);
+            if (!stack.isEmpty() && this.items.test(stack))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private ItemStack takeItemFromChest(Container container)
+    {
+        int slot = 0;
+
+        // Look through all slots in chest, if it contains a matching item, take one
+        for (ItemStack itemStack : container)
+        {
+            if (!itemStack.isEmpty() && this.items.test(itemStack))
+            {
+                ItemStack takenItem = container.removeItem(slot, 1);
+                container.setChanged();
+                return takenItem;
+            }
+
+            slot++;
+        }
+
+        return ItemStack.EMPTY;
+    }
 }

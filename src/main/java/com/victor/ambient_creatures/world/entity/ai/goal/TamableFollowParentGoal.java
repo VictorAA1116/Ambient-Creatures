@@ -15,10 +15,8 @@ public class TamableFollowParentGoal extends Goal
     @Nullable
     private Animal parent;
     private final double speedModifier;
-
     private double horizontalScanRange = 8;
     private double verticalScanRange = 4;
-
     private int timeToRecalcPath;
 
     public TamableFollowParentGoal(final Animal animal, final double speedModifier)

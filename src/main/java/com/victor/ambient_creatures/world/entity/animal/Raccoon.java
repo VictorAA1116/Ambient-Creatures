@@ -2,6 +2,7 @@ package com.victor.ambient_creatures.world.entity.animal;
 
 import com.victor.ambient_creatures.util.ModTags;
 import com.victor.ambient_creatures.world.entity.ModEntities;
+import com.victor.ambient_creatures.world.entity.ai.goal.SearchChestsForItemsGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -65,6 +66,7 @@ public class Raccoon extends Animal implements ContainerUser
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.15));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1, (stack) -> stack.is(ModTags.Items.RACCOON_FOODS), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
+        this.goalSelector.addGoal(5, new SearchChestsForItemsGoal(this, (stack) -> stack.is(ModTags.Items.RACCOON_FOODS), 5, 5, 1.1));
         this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1));
         this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 4));
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
