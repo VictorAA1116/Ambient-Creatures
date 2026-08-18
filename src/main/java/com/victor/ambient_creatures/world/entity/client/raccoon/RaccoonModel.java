@@ -8,8 +8,8 @@ import net.minecraft.util.Mth;
 public class RaccoonModel extends EntityModel<RaccoonRenderState>
 {
     private final ModelPart root;
-    private final ModelPart body;
-    private final ModelPart head;
+    public final ModelPart body;
+    public final ModelPart head;
     private final ModelPart nose;
     private final ModelPart leftEar;
     private final ModelPart rightEar;

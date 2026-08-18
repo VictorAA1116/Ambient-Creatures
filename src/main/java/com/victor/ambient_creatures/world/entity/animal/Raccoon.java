@@ -4,6 +4,7 @@ import com.victor.ambient_creatures.util.ModTags;
 import com.victor.ambient_creatures.world.entity.ModEntities;
 import com.victor.ambient_creatures.world.entity.ai.goal.SearchChestsForItemsGoal;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -39,6 +40,7 @@ public class Raccoon extends Animal implements ContainerUser
     private int idleAnimationTimeout = 0;
 
     private @Nullable BlockPos openedChestPos;
+    private int eatingTime;
 
     public Raccoon(EntityType<? extends Animal> type, Level level)
     {
@@ -264,10 +266,43 @@ public class Raccoon extends Animal implements ContainerUser
     @Override
     public void aiStep()
     {
+        this.tryEat();
         super.aiStep();
     }
 
+    public void tryEat()
+    {
+        if (this.level().isClientSide() || !this.isAlive() || !this.isEffectiveAi()) return;
 
+        ++this.eatingTime;
+
+        ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
+
+        if (this.canEat(itemStack))
+        {
+            if (this.eatingTime > 600)
+            {
+                ItemStack itemStack2 = itemStack.finishUsingItem(this.level(), this);
+
+                if (!itemStack2.isEmpty())
+                {
+                    this.setItemSlot(EquipmentSlot.MAINHAND, itemStack2);
+                }
+
+                this.eatingTime = 0;
+            }
+            else if (this.eatingTime > 560 && this.random.nextFloat() < 0.1F)
+            {
+                this.playEatingSound();
+                this.level().broadcastEntityEvent(this, (byte)45);
+            }
+        }
+    }
+
+    private boolean canEat(ItemStack itemStack)
+    {
+        return itemStack.has(DataComponents.FOOD) && itemStack.has(DataComponents.CONSUMABLE) && this.getTarget() == null;
+    }
 
     @Override
     public boolean isFood(ItemStack itemStack) { return itemStack.is(ModTags.Items.RACCOON_FOODS); }
