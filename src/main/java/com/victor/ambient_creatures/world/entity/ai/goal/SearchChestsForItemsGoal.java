@@ -2,6 +2,7 @@ package com.victor.ambient_creatures.world.entity.ai.goal;
 
 import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PathfinderMob;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.pathfinder.Path;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -32,19 +34,22 @@ public class SearchChestsForItemsGoal extends Goal
     private final double speedModifier;
 
     private SearchChestsState state = SearchChestsState.IDLE;
-    private int cooldownTicks = 0;
+    private final int cooldownTicks;
+    private int cooldownTimer = 0;
     private int pathRecalcTicks = 0;
     private int chestOpenTicks = 0;
     private BlockPos targetChestPos;
+    private BlockPos targetChestAccessPos;
     private ChestBlockEntity targetChest;
 
-    public SearchChestsForItemsGoal(PathfinderMob mob, Predicate<ItemStack> items, int horizontalRange, int verticalRange, double speedModifier)
+    public SearchChestsForItemsGoal(PathfinderMob mob, Predicate<ItemStack> items, int horizontalRange, int verticalRange, double speedModifier, int cooldownTicks)
     {
         this.mob = mob;
         this.items = items;
         this.horizontalRange = horizontalRange;
         this.verticalRange = verticalRange;
         this.speedModifier = speedModifier;
+        this.cooldownTicks = cooldownTicks;
         this.setFlags(java.util.EnumSet.of(Goal.Flag.MOVE));
     }
 
@@ -57,9 +62,9 @@ public class SearchChestsForItemsGoal extends Goal
             return false;
         }
 
-        if (this.cooldownTicks > 0)
+        if (this.cooldownTimer > 0)
         {
-            --this.cooldownTicks;
+            --this.cooldownTimer;
             return false;
         }
 
@@ -83,17 +88,17 @@ public class SearchChestsForItemsGoal extends Goal
     public void stop()
     {
         // Close the chest properly
-        if (this.targetChest != null && this.mob instanceof Raccoon)
+        if (this.targetChest != null && this.mob instanceof Raccoon raccoon)
         {
-            Raccoon raccoon = (Raccoon) this.mob;
             this.targetChest.stopOpen(raccoon);
             raccoon.clearOpenedChestPos();
         }
 
         this.targetChest = null;
         this.targetChestPos = null;
+        this.targetChestAccessPos = null;
         this.state = SearchChestsState.IDLE;
-        this.cooldownTicks = 60; // 3 second cooldown before trying again
+        this.cooldownTimer = cooldownTicks;
         this.chestOpenTicks = 0;
     }
 
@@ -126,11 +131,17 @@ public class SearchChestsForItemsGoal extends Goal
 
             if (this.targetChestPos != null)
             {
+                if (this.targetChestAccessPos == null)
+                {
+                    this.state = SearchChestsState.DONE;
+                    return;
+                }
+
                 // Move towards the chest
                 this.mob.getNavigation().moveTo(
-                        this.targetChestPos.getX() + 0.5,
-                        this.targetChestPos.getY(),
-                        this.targetChestPos.getZ() + 0.5,
+                        this.targetChestAccessPos.getX() + 0.5,
+                        this.targetChestAccessPos.getY(),
+                        this.targetChestAccessPos.getZ() + 0.5,
                         this.speedModifier
                 );
             }
@@ -145,18 +156,17 @@ public class SearchChestsForItemsGoal extends Goal
         if (this.targetChestPos != null)
         {
             double distanceSq = this.mob.distanceToSqr(
-                    this.targetChestPos.getX() + 0.5,
-                    this.targetChestPos.getY() + 0.5,
-                    this.targetChestPos.getZ() + 0.5
+                    this.targetChestAccessPos.getX() + 0.5,
+                    this.targetChestAccessPos.getY() + 0.5,
+                    this.targetChestAccessPos.getZ() + 0.5
             );
 
-            if (distanceSq < 4.0) // Close enough (2 blocks)
+            if (distanceSq < 2.25 || this.mob.getNavigation().isDone())
             {
                 this.mob.getNavigation().stop();
                 this.state = SearchChestsState.LOOTING_CHEST;
-                if (this.mob instanceof Raccoon)
+                if (this.mob instanceof Raccoon raccoon)
                 {
-                    Raccoon raccoon = (Raccoon)this.mob;
                     raccoon.setOpenedChestPos(this.targetChestPos);
                 }
             }
@@ -172,9 +182,8 @@ public class SearchChestsForItemsGoal extends Goal
         }
 
         // Open the chest on first interaction
-        if (this.chestOpenTicks == 0 && this.mob instanceof Raccoon)
+        if (this.chestOpenTicks == 0 && this.mob instanceof Raccoon raccoon)
         {
-            Raccoon raccoon = (Raccoon) this.mob;
             this.targetChest.startOpen(raccoon);
             raccoon.setOpenedChestPos(this.targetChestPos);
         }
@@ -220,9 +229,8 @@ public class SearchChestsForItemsGoal extends Goal
 
             for (BlockEntity blockEntity : levelChunk.getBlockEntities().values())
             {
-                if (blockEntity instanceof ChestBlockEntity)
+                if (blockEntity instanceof ChestBlockEntity chest)
                 {
-                    ChestBlockEntity chest = (ChestBlockEntity) blockEntity;
                     BlockPos chestPos = chest.getBlockPos();
 
                     // Check vertical range
@@ -238,10 +246,12 @@ public class SearchChestsForItemsGoal extends Goal
                     if (distance < closestDistance)
                     {
                         // Check if chest has food items
-                        if (this.hasMatchingItems(chest))
+                        BlockPos accessPos = this.findReachableChestAccessPos(chestPos);
+                        if (this.hasMatchingItems(chest) && accessPos != null)
                         {
                             this.targetChest = chest;
                             closestChestPos = chestPos;
+                            this.targetChestAccessPos = accessPos;
                             closestDistance = distance;
                         }
                     }
@@ -283,5 +293,25 @@ public class SearchChestsForItemsGoal extends Goal
         }
 
         return ItemStack.EMPTY;
+    }
+
+    private boolean canPathToChest(BlockPos chestPos)
+    {
+        Path path = this.mob.getNavigation().createPath(chestPos, 0);
+        return path != null && path.canReach();
+    }
+
+    private BlockPos findReachableChestAccessPos(BlockPos chestPos)
+    {
+        for (Direction direction : Direction.Plane.HORIZONTAL)
+        {
+            BlockPos accessPos = chestPos.relative(direction);
+            if (this.canPathToChest(accessPos))
+            {
+                return accessPos;
+            }
+        }
+
+        return null;
     }
 }

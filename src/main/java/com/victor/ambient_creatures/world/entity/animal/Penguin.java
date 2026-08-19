@@ -392,7 +392,6 @@ public class Penguin extends Animal
 
             this.setAirSupply(this.getMaxAirSupply());
         }
-
     }
 
     @Override
