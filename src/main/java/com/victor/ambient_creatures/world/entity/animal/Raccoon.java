@@ -12,11 +12,13 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
@@ -351,6 +353,41 @@ public class Raccoon extends Animal implements ContainerUser
         else
         {
             super.handleEntityEvent(id);
+        }
+    }
+
+    @Override
+    public void actuallyHurt(final ServerLevel level, final DamageSource source, final float dmg)
+    {
+        super.actuallyHurt(level, source, dmg);
+
+        if (!this.level().isClientSide())
+        {
+            ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
+
+            if (this.canSpit(itemStack))
+            {
+                this.spit(itemStack);
+            }
+        }
+    }
+
+    private boolean canSpit(ItemStack itemStack)
+    {
+        return this.eatingTime > 10 && !itemStack.isEmpty() && itemStack.has(DataComponents.FOOD) && itemStack.has(DataComponents.CONSUMABLE);
+    }
+
+    private void spit(ItemStack stack)
+    {
+        if (!stack.isEmpty() && !this.level().isClientSide())
+        {
+            ItemEntity itemEntity = new ItemEntity(this.level(), this.getX() + this.getLookAngle().x, this.getY() + (double) 1.0F, this.getZ() + this.getLookAngle().z, stack);
+            itemEntity.setPickUpDelay(40);
+            itemEntity.setThrower(this);
+            this.playSound(SoundEvents.FOX_SPIT, 1.0F, 1.0F);
+            this.level().addFreshEntity(itemEntity);
+            this.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+            this.eatingTime = 0;
         }
     }
 

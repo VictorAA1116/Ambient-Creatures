@@ -41,6 +41,8 @@ public class SearchChestsForItemsGoal extends Goal
     private BlockPos targetChestPos;
     private BlockPos targetChestAccessPos;
     private ChestBlockEntity targetChest;
+    private int searchDurationTicks = 20;
+    private int takeItemTicks;
 
     public SearchChestsForItemsGoal(PathfinderMob mob, Predicate<ItemStack> items, int horizontalRange, int verticalRange, double speedModifier, int cooldownTicks)
     {
@@ -50,6 +52,7 @@ public class SearchChestsForItemsGoal extends Goal
         this.verticalRange = verticalRange;
         this.speedModifier = speedModifier;
         this.cooldownTicks = cooldownTicks;
+        this.takeItemTicks = searchDurationTicks / 2;
         this.setFlags(java.util.EnumSet.of(Goal.Flag.MOVE));
     }
 
@@ -190,8 +193,8 @@ public class SearchChestsForItemsGoal extends Goal
 
         this.chestOpenTicks++;
 
-        // Take item halfway through the chest open duration (5 ticks)
-        if (this.chestOpenTicks == 5)
+        // Take item halfway through the chest open duration
+        if (this.chestOpenTicks == takeItemTicks)
         {
             ItemStack stolenItem = this.takeItemFromChest(this.targetChest);
 
@@ -203,8 +206,8 @@ public class SearchChestsForItemsGoal extends Goal
             }
         }
 
-        // Keep chest open for 10 ticks, then finish
-        if (this.chestOpenTicks >= 10)
+        // Keep chest open, then finish
+        if (this.chestOpenTicks >= searchDurationTicks)
         {
             this.state = SearchChestsState.DONE;
             this.chestOpenTicks = 0;
