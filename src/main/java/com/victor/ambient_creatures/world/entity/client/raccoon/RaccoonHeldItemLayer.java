@@ -2,8 +2,6 @@ package com.victor.ambient_creatures.world.entity.client.raccoon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.victor.ambient_creatures.world.entity.client.penguin.PenguinModel;
-import com.victor.ambient_creatures.world.entity.client.penguin.PenguinRenderState;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
@@ -24,13 +22,13 @@ public class RaccoonHeldItemLayer extends RenderLayer<RaccoonRenderState, Raccoo
 
         if (!itemRenderState.isEmpty())
         {
-            //boolean isSliding = state.slidingAnimationState.isStarted() || state.swimIdleAnimationState.isStarted() || state.swimmingAnimationState.isStarted();
             poseStack.pushPose();
 
             RaccoonModel model = this.getParentModel();
             ModelPart root = model.root();
             ModelPart head = model.head;
             ModelPart body = model.body;
+            ModelPart nose = model.nose;
 
             root.translateAndRotate(poseStack);
 
@@ -38,48 +36,23 @@ public class RaccoonHeldItemLayer extends RenderLayer<RaccoonRenderState, Raccoo
             body.translateAndRotate(poseStack);
 
             // Apply head transform to capture head animations (pitch adjustment for laying down, yaw/pitch from look).
-            poseStack.translate((head.x / 16.0F), (head.y / 16.0F), (head.z / 16.0F));
+            head.translateAndRotate(poseStack);
 
-//            // Apply clamped look rotations from the entity's view angles.
-//            if (isSliding)
-//            {
-//                poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.clamp(-yRot, -30.0f, 30.0f)));
-//            }
-//            else
-//            {
-//
-//            }
-
-            poseStack.mulPose(Axis.YP.rotationDegrees(Mth.clamp(yRot, -30.0f, 30.0f)));
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.clamp(xRot, -25.0f, 45.0f)));
+            // Apply nose transform to position the item at the mouth in world space.
+            nose.translateAndRotate(poseStack);
 
             // Small offset to position item at the beak in world space
             if (state.isBaby)
             {
-//                if (isSliding)
-//                {
-//                    poseStack.translate(0.0F, -0.25F, -0.075F);
-//                }
-//                else
-//                {
-//
-//                }
-                poseStack.translate(0.0F, 0.075F, -0.25F);
+                poseStack.translate(0.0F, 0.05F, -0.1F);
             }
-//            else if (isSliding)
-//            {
-//                poseStack.translate(0.0F, -0.37F, -0.1F);
-//            }
             else
             {
-                poseStack.translate(0.0F, 0.1F, -0.37F);
+                poseStack.translate(0.0F, 0.05F, -0.2F);
             }
 
             // Rotate to orient the item correctly
-//            if (!isSliding)
-//            {
-//                poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-//            }
+            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
 
             itemRenderState.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
             poseStack.popPose();

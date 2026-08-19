@@ -10,7 +10,7 @@ public class RaccoonModel extends EntityModel<RaccoonRenderState>
     private final ModelPart root;
     public final ModelPart body;
     public final ModelPart head;
-    private final ModelPart nose;
+    public final ModelPart nose;
     private final ModelPart leftEar;
     private final ModelPart rightEar;
     private final ModelPart leftFrontLeg;

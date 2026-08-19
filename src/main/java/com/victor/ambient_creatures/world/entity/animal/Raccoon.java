@@ -5,10 +5,13 @@ import com.victor.ambient_creatures.world.entity.ModEntities;
 import com.victor.ambient_creatures.world.entity.ai.goal.SearchChestsForItemsGoal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -16,6 +19,7 @@ import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
@@ -23,6 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 
 public class Raccoon extends Animal implements ContainerUser
@@ -68,10 +73,10 @@ public class Raccoon extends Animal implements ContainerUser
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.15));
         this.goalSelector.addGoal(3, new TemptGoal(this, 1, (stack) -> stack.is(ModTags.Items.RACCOON_FOODS), false));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.1));
-        this.goalSelector.addGoal(5, new SearchChestsForItemsGoal(this, (stack) -> stack.is(ModTags.Items.RACCOON_FOODS), 5, 5, 1.1));
-        this.goalSelector.addGoal(6, new RandomStrollGoal(this, 1));
-        this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 4));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(5, new RandomStrollGoal(this, 1));
+        this.goalSelector.addGoal(6, new SearchChestsForItemsGoal(this, (stack) -> stack.is(ModTags.Items.RACCOON_FOODS), 5, 5, 1.1));
+        this.goalSelector.addGoal(7, new LookAtPlayerGoal(this, Player.class, 4));
+        this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -302,6 +307,49 @@ public class Raccoon extends Animal implements ContainerUser
     private boolean canEat(ItemStack itemStack)
     {
         return itemStack.has(DataComponents.FOOD) && itemStack.has(DataComponents.CONSUMABLE) && this.getTarget() == null;
+    }
+
+    @Override
+    protected void playEatingSound()
+    {
+        this.playSound(SoundEvents.FOX_EAT, 1.0F, 1.0F);
+    }
+
+    @Override
+    public void handleEntityEvent(final byte id)
+    {
+        // Play eating particle effects when eating
+        if (id == 45)
+        {
+            ItemStack mouthItem = this.getItemBySlot(EquipmentSlot.MAINHAND);
+
+            if (!mouthItem.isEmpty())
+            {
+                ItemParticleOption breakParticle = new ItemParticleOption(ParticleTypes.ITEM, ItemStackTemplate.fromNonEmptyStack(mouthItem));
+
+                for (int i = 0; i < 8; i++)
+                {
+                    Vec3 direction = new Vec3((this.random.nextFloat() - 0.5) * 0.1, this.random.nextFloat() * 0.1 + 0.1, 0.0F)
+                            .xRot(-this.getXRot() * (float) (Math.PI / 180.0))
+                            .yRot(-this.getYRot() * (float) (Math.PI / 180.0));
+
+                    this.level()
+                            .addParticle(
+                                    breakParticle,
+                                    this.getX() + this.getLookAngle().x / (double)2.0F,
+                                    this.getY(),
+                                    this.getZ() + this.getLookAngle().z / (double)2.0F,
+                                    direction.x,
+                                    direction.y + 0.05,
+                                    direction.z
+                            );
+                }
+            }
+        }
+        else
+        {
+            super.handleEntityEvent(id);
+        }
     }
 
     @Override

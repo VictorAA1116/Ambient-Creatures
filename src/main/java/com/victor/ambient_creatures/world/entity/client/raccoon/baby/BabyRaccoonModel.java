@@ -30,13 +30,15 @@ public class BabyRaccoonModel extends RaccoonModel
 
     public static LayerDefinition getTexturedModelData()
     {
+        float yOffset = 18.6F;
+
         // Root
         MeshDefinition modelData = new MeshDefinition();
         PartDefinition modelPartDefinition = modelData.getRoot();
-        PartDefinition root = modelPartDefinition.addOrReplaceChild(PartNames.ROOT, CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
+        PartDefinition root = modelPartDefinition.addOrReplaceChild(PartNames.ROOT, CubeListBuilder.create(), PartPose.offset(0.0F, 0.0F, 0.0F));
 
         // Body
-        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -2.0F, -4.0F, 6.0F, 4.0F, 8.0F), PartPose.offset(0.0F, -5.0F, 0.0F));
+        PartDefinition body = root.addOrReplaceChild(PartNames.BODY, CubeListBuilder.create().texOffs(0, 0).addBox(-3.0F, -2.0F, -4.0F, 6.0F, 4.0F, 8.0F), PartPose.offset(0.0F, yOffset, 0.0F));
 
         // Head
         PartDefinition head = body.addOrReplaceChild(PartNames.HEAD, CubeListBuilder.create().texOffs(0, 13).addBox(-2.5F, -2.0F, -3.0F, 5.0F, 4.0F, 4.0F), PartPose.offset(0.0F, -1.0F, -4.0F));
