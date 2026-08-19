@@ -4,6 +4,7 @@ import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Container;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
@@ -41,8 +42,10 @@ public class SearchChestsForItemsGoal extends Goal
     private BlockPos targetChestPos;
     private BlockPos targetChestAccessPos;
     private ChestBlockEntity targetChest;
-    private int searchDurationTicks = 20;
+    private int searchDurationTicks = 40;
     private int takeItemTicks;
+    private boolean chestIsOpen = false;
+    private static final int MAX_LOOT_TIME = 100; // 5 seconds max
 
     public SearchChestsForItemsGoal(PathfinderMob mob, Predicate<ItemStack> items, int horizontalRange, int verticalRange, double speedModifier, int cooldownTicks)
     {
@@ -85,18 +88,31 @@ public class SearchChestsForItemsGoal extends Goal
     {
         this.state = SearchChestsState.TRAVELLING;
         this.pathRecalcTicks = 0;
+        this.chestIsOpen = false;
     }
 
     @Override
     public void stop()
     {
-        // Close the chest properly
-        if (this.targetChest != null && this.mob instanceof Raccoon raccoon)
+        // Always close the chest if it's open, regardless of state
+        if (this.chestIsOpen && this.targetChest != null && this.mob instanceof Raccoon raccoon)
         {
-            this.targetChest.stopOpen(raccoon);
-            raccoon.clearOpenedChestPos();
+            try
+            {
+                this.targetChest.stopOpen(raccoon);
+                raccoon.clearOpenedChestPos();
+            }
+            catch (Exception e)
+            {
+                // Fallback: ensure chest is closed even if there's an error
+                if (this.targetChest != null && this.mob instanceof Raccoon raccoon2)
+                {
+                    raccoon2.clearOpenedChestPos();
+                }
+            }
         }
 
+        this.chestIsOpen = false;
         this.targetChest = null;
         this.targetChestPos = null;
         this.targetChestAccessPos = null;
@@ -164,7 +180,7 @@ public class SearchChestsForItemsGoal extends Goal
                     this.targetChestAccessPos.getZ() + 0.5
             );
 
-            if (distanceSq < 2.25 || this.mob.getNavigation().isDone())
+            if (distanceSq < 0.25 || this.mob.getNavigation().isDone())
             {
                 this.mob.getNavigation().stop();
                 this.state = SearchChestsState.LOOTING_CHEST;
@@ -189,9 +205,39 @@ public class SearchChestsForItemsGoal extends Goal
         {
             this.targetChest.startOpen(raccoon);
             raccoon.setOpenedChestPos(this.targetChestPos);
+            this.chestIsOpen = true;
         }
 
         this.chestOpenTicks++;
+
+        // Safety: if looting is taking too long, force finish
+        if (this.chestOpenTicks > MAX_LOOT_TIME)
+        {
+            this.state = SearchChestsState.DONE;
+            return;
+        }
+
+        // Safety: if the raccoon has moved too far from the chest, abort
+        if (this.targetChestAccessPos != null)
+        {
+            double distanceSq = this.mob.distanceToSqr(
+                    this.targetChestAccessPos.getX() + 0.5,
+                    this.targetChestAccessPos.getY() + 0.5,
+                    this.targetChestAccessPos.getZ() + 0.5
+            );
+
+            if (distanceSq > 16.0) // More than 4 blocks away
+            {
+                this.state = SearchChestsState.DONE;
+                return;
+            }
+        }
+
+        // Make the raccoon look at the chest center
+        double chestX = this.targetChestPos.getX() + 0.5;
+        double chestY = this.targetChestPos.getY() + 0.5;
+        double chestZ = this.targetChestPos.getZ() + 0.5;
+        this.mob.getLookControl().setLookAt(chestX, chestY, chestZ);
 
         // Take item halfway through the chest open duration
         if (this.chestOpenTicks == takeItemTicks)
