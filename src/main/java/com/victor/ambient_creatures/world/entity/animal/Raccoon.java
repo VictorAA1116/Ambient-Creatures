@@ -12,6 +12,8 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -361,6 +363,7 @@ public class Raccoon extends Animal implements ContainerUser
     {
         super.actuallyHurt(level, source, dmg);
 
+        // Spit item in mouth when hurt
         if (!this.level().isClientSide())
         {
             ItemStack itemStack = this.getItemBySlot(EquipmentSlot.MAINHAND);
@@ -369,6 +372,22 @@ public class Raccoon extends Animal implements ContainerUser
             {
                 this.spit(itemStack);
             }
+        }
+    }
+
+    @Override
+    public InteractionResult mobInteract(final Player player, final InteractionHand hand)
+    {
+        // spit item in mouth if player right-clicks on the raccoon
+        if (!this.getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && canSpit(this.getItemBySlot(EquipmentSlot.MAINHAND)))
+        {
+            this.spit(this.getItemBySlot(EquipmentSlot.MAINHAND));
+
+            return InteractionResult.SUCCESS_SERVER;
+        }
+        else
+        {
+            return super.mobInteract(player, hand);
         }
     }
 
