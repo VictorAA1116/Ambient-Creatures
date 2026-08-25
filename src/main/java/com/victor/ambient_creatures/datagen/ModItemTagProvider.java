@@ -23,6 +23,10 @@ public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
                 .add(Items.SEAGRASS.builtInRegistryHolder().key())
         ;
 
+        builder(ModTags.Items.OWL_FOODS)
+                .add(Items.RABBIT.builtInRegistryHolder().key())
+        ;
+
         builder(ModTags.Items.PENGUIN_FOODS)
                 .add(Items.COD.builtInRegistryHolder().key())
                 .add(Items.SALMON.builtInRegistryHolder().key())

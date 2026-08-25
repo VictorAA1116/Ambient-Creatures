@@ -17,9 +17,12 @@ import net.minecraft.resources.Identifier;
 public class RaccoonRenderer extends MobRenderer<Raccoon, RaccoonRenderState, RaccoonModel>
 {
     private final AdultAndBabyModelPair<RaccoonModel> models;
+
     private static final Identifier ADULT_TEXTURE_PATH = Identifier.fromNamespaceAndPath(AmbientCreatures.MOD_ID, "textures/entity/raccoon/adult_raccoon.png");
     private static final Identifier BABY_TEXTURE_PATH = Identifier.fromNamespaceAndPath(AmbientCreatures.MOD_ID, "textures/entity/raccoon/baby_raccoon.png");
-    private static final float shadowSize = 0.7F;
+
+    private static final float shadowSize = 0.55F;
+
     public RaccoonRenderer(EntityRendererProvider.Context context)
     {
         super(context, new AdultRaccoonModel(context.bakeLayer(ModEntityModelLayers.ADULT_RACCOON)), shadowSize);

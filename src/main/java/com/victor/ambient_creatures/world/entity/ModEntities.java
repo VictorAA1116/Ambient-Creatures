@@ -1,6 +1,8 @@
 package com.victor.ambient_creatures.world.entity;
 
 import com.victor.ambient_creatures.AmbientCreatures;
+import com.victor.ambient_creatures.world.entity.animal.Owl;
+import com.victor.ambient_creatures.world.entity.client.owl.OwlRenderer;
 import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import com.victor.ambient_creatures.world.entity.client.capybara.CapybaraRenderer;
 import com.victor.ambient_creatures.world.entity.client.penguin.PenguinRenderer;
@@ -25,6 +27,11 @@ public class ModEntities
                     .sized(1.0f, 1.0f)
     );
 
+    public static final EntityType<Owl> OWL = register("owl",
+            EntityType.Builder.of(Owl::new, MobCategory.CREATURE)
+                    .sized(0.5f, 1.0f)
+    );
+
     public static final EntityType<Penguin> PENGUIN = register("penguin",
             EntityType.Builder.of(Penguin::new, MobCategory.CREATURE)
                     .sized(0.5f, 1.0f)
@@ -32,7 +39,7 @@ public class ModEntities
 
     public static final EntityType<Raccoon> RACCOON = register("raccoon",
             EntityType.Builder.of(Raccoon::new, MobCategory.CREATURE)
-                    .sized(0.7f, 0.6f)
+                    .sized(0.7f, 0.7f)
     );
 
     public static void registerModEntities()
@@ -48,6 +55,7 @@ public class ModEntities
         ModEntityModelLayers.registerModelLayers();
 
         EntityRenderers.register(CAPYBARA, CapybaraRenderer::new);
+        EntityRenderers.register(OWL, OwlRenderer::new);
         EntityRenderers.register(PENGUIN, PenguinRenderer::new);
         EntityRenderers.register(RACCOON, RaccoonRenderer::new);
     }
@@ -67,6 +75,7 @@ public class ModEntities
     public static void registerAttributes()
     {
         FabricDefaultAttributeRegistry.register(CAPYBARA, Capybara.createAttributes());
+        FabricDefaultAttributeRegistry.register(OWL, Owl.createAttributes());
         FabricDefaultAttributeRegistry.register(PENGUIN, Penguin.createAttributes());
         FabricDefaultAttributeRegistry.register(RACCOON, Raccoon.createAttributes());
     }

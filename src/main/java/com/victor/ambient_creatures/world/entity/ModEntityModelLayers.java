@@ -3,6 +3,8 @@ package com.victor.ambient_creatures.world.entity;
 import com.victor.ambient_creatures.AmbientCreatures;
 import com.victor.ambient_creatures.world.entity.client.capybara.adult.AdultCapybaraModel;
 import com.victor.ambient_creatures.world.entity.client.capybara.baby.BabyCapybaraModel;
+import com.victor.ambient_creatures.world.entity.client.owl.adult.AdultOwlModel;
+import com.victor.ambient_creatures.world.entity.client.owl.baby.BabyOwlModel;
 import com.victor.ambient_creatures.world.entity.client.penguin.adult.AdultPenguinModel;
 import com.victor.ambient_creatures.world.entity.client.penguin.baby.BabyPenguinModel;
 import com.victor.ambient_creatures.world.entity.client.raccoon.adult.AdultRaccoonModel;
@@ -16,6 +18,10 @@ public class ModEntityModelLayers
     // Capybara
     public static final ModelLayerLocation ADULT_CAPYBARA =  createMain("adult_capybara");
     public static final ModelLayerLocation BABY_CAPYBARA =  createMain("baby_capybara");
+
+    // Owl
+    public static final ModelLayerLocation ADULT_OWL = createMain("adult_owl");
+    public static final ModelLayerLocation BABY_OWL = createMain("baby_owl");
 
     // Penguin
     public static final ModelLayerLocation ADULT_PENGUIN = createMain("adult_penguin");
@@ -35,6 +41,10 @@ public class ModEntityModelLayers
         // Capybara
         ModelLayerRegistry.registerModelLayer(ADULT_CAPYBARA, AdultCapybaraModel::getTexturedModelData);
         ModelLayerRegistry.registerModelLayer(BABY_CAPYBARA, BabyCapybaraModel::getTexturedModelData);
+
+        // Owl
+        ModelLayerRegistry.registerModelLayer(ADULT_OWL, AdultOwlModel::getTexturedModelData);
+        ModelLayerRegistry.registerModelLayer(BABY_OWL, BabyOwlModel::getTexturedModelData);
 
         // Penguin
         ModelLayerRegistry.registerModelLayer(ADULT_PENGUIN, AdultPenguinModel::getTexturedModelData);

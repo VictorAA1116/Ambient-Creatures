@@ -37,6 +37,18 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
                         )
         );
 
+        this.add(ModEntities.OWL,
+                LootTable.lootTable()
+                        .pool(LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1))
+                                .add(LootItem.lootTableItem(Items.FEATHER).setWeight(2)
+                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
+                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 2.0F))))
+                                .when(LootItemKilledByPlayerCondition.killedByPlayer())
+                                .build()
+                        )
+        );
+
         this.add(ModEntities.PENGUIN,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()

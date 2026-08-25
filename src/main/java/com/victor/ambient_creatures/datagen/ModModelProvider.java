@@ -20,6 +20,7 @@ public class ModModelProvider extends FabricModelProvider
     public void generateItemModels(ItemModelGenerators itemModelGenerators)
     {
         itemModelGenerators.generateFlatItem(ModItems.CAPYBARA_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerators.generateFlatItem(ModItems.OWL_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.PENGUIN_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
         itemModelGenerators.generateFlatItem(ModItems.RACCOON_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
     }

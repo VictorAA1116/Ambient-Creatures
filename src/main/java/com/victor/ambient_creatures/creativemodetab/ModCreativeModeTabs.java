@@ -22,6 +22,7 @@ public class ModCreativeModeTabs
                     .displayItems((parameters, output) -> {
 
                         output.accept(ModItems.CAPYBARA_SPAWN_EGG);
+                        output.accept(ModItems.OWL_SPAWN_EGG);
                         output.accept(ModItems.PENGUIN_SPAWN_EGG);
                         output.accept(ModItems.RACCOON_SPAWN_EGG);
 
@@ -35,6 +36,7 @@ public class ModCreativeModeTabs
             entries.insertAfter(Items.POLAR_BEAR_SPAWN_EGG, ModItems.PENGUIN_SPAWN_EGG);
             entries.insertAfter(Items.AXOLOTL_SPAWN_EGG, ModItems.CAPYBARA_SPAWN_EGG);
             entries.insertAfter(Items.FOX_SPAWN_EGG, ModItems.RACCOON_SPAWN_EGG);
+            entries.accept(ModItems.OWL_SPAWN_EGG);
 
         });
     }

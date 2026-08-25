@@ -2,6 +2,9 @@
   "item.ambient_creatures.capybara_spawn_egg": "Capybara Spawn Egg",
   "entity.ambient_creatures.capybara": "Capybara",
 
+  "item.ambient_creatures.owl_spawn_egg": "Owl Spawn Egg",
+  "entity.ambient_creatures.owl": "Owl",
+
   "item.ambient_creatures.penguin_spawn_egg": "Penguin Spawn Egg",
   "entity.ambient_creatures.penguin": "Penguin",
 
