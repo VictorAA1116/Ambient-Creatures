@@ -13,6 +13,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 public class AdultOwlModel extends OwlModel
 {
     private final KeyframeAnimation idleAnimation;
+    private final KeyframeAnimation walkingAnimation;
     private final KeyframeAnimation flyingAnimation;
 
     public AdultOwlModel(ModelPart root)
@@ -20,6 +21,7 @@ public class AdultOwlModel extends OwlModel
         super(root);
 
         this.idleAnimation = AdultOwlAnimations.IDLE.bake(root);
+        this.walkingAnimation = AdultOwlAnimations.WALKING.bake(root);
         this.flyingAnimation = AdultOwlAnimations.FLYING.bake(root);
     }
 
@@ -72,6 +74,16 @@ public class AdultOwlModel extends OwlModel
         if (state.flyingAnimationState.isStarted())
         {
             this.flyingAnimation.apply(state.flyingAnimationState, state.ageInTicks);
+        }
+        else if (state.walkingAnimationState.isStarted())
+        {
+            float limbSwingAmplitude = state.walkAnimationSpeed * 1.5f;
+            float limbSwingAnimationProgress = state.walkAnimationPos;
+
+            float limbSwingSpeed = 3.0F;
+            float limbSwingAmount = 2.5f;
+
+            this.walkingAnimation.applyWalk(limbSwingAnimationProgress, limbSwingAmplitude, limbSwingSpeed, limbSwingAmount);
         }
         else if (state.idleAnimationState.isStarted())
         {

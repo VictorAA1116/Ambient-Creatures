@@ -6,5 +6,6 @@ import net.minecraft.world.entity.AnimationState;
 public class OwlRenderState extends LivingEntityRenderState
 {
     public final AnimationState idleAnimationState = new AnimationState();
+    public final AnimationState walkingAnimationState = new AnimationState();
     public final AnimationState flyingAnimationState = new AnimationState();
 }

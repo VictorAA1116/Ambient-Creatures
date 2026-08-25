@@ -47,6 +47,4 @@ public class OwlModel extends EntityModel<OwlRenderState>
         this.head.yRot = headYaw * (float)(Math.PI / 180.0);
         this.head.xRot = headPitch * (float)(Math.PI / 180.0);
     }
-
-
 }

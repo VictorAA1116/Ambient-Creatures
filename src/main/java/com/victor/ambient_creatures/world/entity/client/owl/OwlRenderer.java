@@ -56,6 +56,7 @@ public class OwlRenderer extends MobRenderer<Owl, OwlRenderState, OwlModel>
         super.extractRenderState(owl, state, f);
 
         state.idleAnimationState.copyFrom(owl.idleAnimationState);
+        state.walkingAnimationState.copyFrom(owl.walkingAnimationState);
         state.flyingAnimationState.copyFrom(owl.flyingAnimationState);
     }
 }

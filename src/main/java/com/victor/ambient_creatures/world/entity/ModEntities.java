@@ -39,7 +39,7 @@ public class ModEntities
 
     public static final EntityType<Raccoon> RACCOON = register("raccoon",
             EntityType.Builder.of(Raccoon::new, MobCategory.CREATURE)
-                    .sized(0.7f, 0.7f)
+                    .sized(0.7f, 0.8f)
     );
 
     public static void registerModEntities()
