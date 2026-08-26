@@ -29,7 +29,7 @@ public class AdultOwlModel extends OwlModel
     {
         // Root
         MeshDefinition modelData = new MeshDefinition();
-        PartDefinition modelPartDefinition= modelData.getRoot();
+        PartDefinition modelPartDefinition = modelData.getRoot();
         PartDefinition root = modelPartDefinition.addOrReplaceChild("root", CubeListBuilder.create(), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         // Body
