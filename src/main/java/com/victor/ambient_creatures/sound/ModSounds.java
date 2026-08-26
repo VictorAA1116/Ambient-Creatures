@@ -9,6 +9,8 @@ import net.minecraft.sounds.SoundEvent;
 public class ModSounds
 {
     public static final SoundEvent PENGUIN_AMBIENT = registerSoundEvent("penguin_ambient");
+    public static final SoundEvent OWL_AMBIENT_1 = registerSoundEvent("owl_ambient_1");
+    public static final SoundEvent OWL_AMBIENT_2 = registerSoundEvent("owl_ambient_2");
 
     private static SoundEvent registerSoundEvent(String name)
     {

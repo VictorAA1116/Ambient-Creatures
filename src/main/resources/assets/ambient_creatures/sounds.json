@@ -4,5 +4,17 @@
     "sounds": [
       "ambient_creatures:penguin_ambient"
     ]
+  },
+  "owl_ambient_1": {
+    "subtitle": "Owl hoots",
+    "sounds": [
+      "ambient_creatures:owl_ambient_1"
+    ]
+  },
+  "owl_ambient_2": {
+      "subtitle": "Owl hoots",
+      "sounds": [
+      "ambient_creatures:owl_ambient_2"
+      ]
   }
 }
