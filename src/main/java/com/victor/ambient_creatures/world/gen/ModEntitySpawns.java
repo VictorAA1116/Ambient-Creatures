@@ -2,6 +2,7 @@ package com.victor.ambient_creatures.world.gen;
 
 import com.victor.ambient_creatures.world.entity.ModEntities;
 import com.victor.ambient_creatures.world.entity.animal.Capybara;
+import com.victor.ambient_creatures.world.entity.animal.Owl;
 import com.victor.ambient_creatures.world.entity.animal.Penguin;
 import com.victor.ambient_creatures.world.entity.animal.Raccoon;
 import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
@@ -27,6 +28,34 @@ public class ModEntitySpawns
         }
 
         if (level.getBlockState(blockPos).getBlock() == Blocks.WATER && level.getBlockState(blockPos.above()).isAir())
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean canOwlSpawn(EntityType<Owl> type, ServerLevelAccessor level, EntitySpawnReason spawnReason, BlockPos blockPos, RandomSource random)
+    {
+        if (Animal.checkAnimalSpawnRules(type, level, spawnReason, blockPos, random))
+        {
+            return true;
+        }
+
+        if
+        (
+            level.getBlockState(blockPos).getBlock() == Blocks.OAK_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.SPRUCE_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.BIRCH_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.JUNGLE_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.ACACIA_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.DARK_OAK_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.AZALEA_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.FLOWERING_AZALEA_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.MANGROVE_LEAVES
+            || level.getBlockState(blockPos).getBlock() == Blocks.CHERRY_LEAVES
+            || level.getBlockState(blockPos).isAir()
+        )
         {
             return true;
         }
@@ -84,6 +113,24 @@ public class ModEntitySpawns
 
         SpawnPlacements.register(ModEntities.CAPYBARA, SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, ModEntitySpawns::canCapybaraSpawn);
 
+        // Owl Spawns
+        BiomeModifications.addSpawn(
+                BiomeSelectors.includeByKey(
+                        Biomes.FOREST,
+                        Biomes.BIRCH_FOREST,
+                        Biomes.DARK_FOREST,
+                        Biomes.FLOWER_FOREST,
+                        Biomes.OLD_GROWTH_BIRCH_FOREST,
+                        Biomes.OLD_GROWTH_PINE_TAIGA,
+                        Biomes.OLD_GROWTH_SPRUCE_TAIGA,
+                        Biomes.TAIGA,
+                        Biomes.SNOWY_TAIGA
+                ),
+                MobCategory.CREATURE, ModEntities.OWL, 30, 1, 3
+        );
+
+        SpawnPlacements.register(ModEntities.OWL, SpawnPlacementTypes.NO_RESTRICTIONS, Heightmap.Types.MOTION_BLOCKING, ModEntitySpawns::canOwlSpawn);
+
         // Penguin Spawns
         BiomeModifications.addSpawn(
                 BiomeSelectors.includeByKey(
@@ -105,7 +152,11 @@ public class ModEntitySpawns
                         Biomes.BIRCH_FOREST,
                         Biomes.DARK_FOREST,
                         Biomes.FLOWER_FOREST,
+                        Biomes.CHERRY_GROVE,
                         Biomes.OLD_GROWTH_BIRCH_FOREST,
+                        Biomes.OLD_GROWTH_PINE_TAIGA,
+                        Biomes.OLD_GROWTH_SPRUCE_TAIGA,
+                        Biomes.TAIGA,
                         Biomes.RIVER
                 ),
                 MobCategory.CREATURE, ModEntities.RACCOON, 30, 1, 3
