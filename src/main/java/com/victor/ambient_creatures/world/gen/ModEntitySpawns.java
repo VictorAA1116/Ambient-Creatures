@@ -118,6 +118,7 @@ public class ModEntitySpawns
                 BiomeSelectors.includeByKey(
                         Biomes.FOREST,
                         Biomes.BIRCH_FOREST,
+                        Biomes.DAPPLED_FOREST,
                         Biomes.DARK_FOREST,
                         Biomes.FLOWER_FOREST,
                         Biomes.OLD_GROWTH_BIRCH_FOREST,
@@ -150,6 +151,7 @@ public class ModEntitySpawns
                 BiomeSelectors.includeByKey(
                         Biomes.FOREST,
                         Biomes.BIRCH_FOREST,
+                        Biomes.DAPPLED_FOREST,
                         Biomes.DARK_FOREST,
                         Biomes.FLOWER_FOREST,
                         Biomes.CHERRY_GROVE,
