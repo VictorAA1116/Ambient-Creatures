@@ -11,8 +11,8 @@ import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemKilledByPlayerCondition;
-import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
+import net.minecraft.world.level.storage.loot.providers.number.floats.ContextFloatProviders;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -29,7 +29,7 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
         this.add(ModEntities.CAPYBARA,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
+                                .setRolls(ContextIntProviders.exactly(1))
                                 .add(LootItem.lootTableItem(Items.SEAGRASS))
                                 .add(LootItem.lootTableItem(Items.KELP))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
@@ -40,10 +40,10 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
         this.add(ModEntities.OWL,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
+                                .setRolls(ContextIntProviders.exactly(1))
                                 .add(LootItem.lootTableItem(Items.FEATHER).setWeight(2)
-                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 2.0F))))
+                                        .apply(SetItemCountFunction.setCount(ContextIntProviders.between(0, 2)))
+                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.enchantments, ContextFloatProviders.between(0, 2))))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
                                 .build()
                         )
@@ -52,11 +52,11 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
         this.add(ModEntities.PENGUIN,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
+                                .setRolls(ContextIntProviders.exactly(1))
                                 .add(LootItem.lootTableItem(Items.BONE_MEAL))
                                 .add(LootItem.lootTableItem(Items.FEATHER).setWeight(2)
-                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 2.0F))))
+                                        .apply(SetItemCountFunction.setCount(ContextIntProviders.between(0, 2)))
+                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.enchantments, ContextFloatProviders.between(0, 2))))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
                                 .build()
                         )
@@ -65,10 +65,10 @@ public class ModEntityLootTableProvider extends FabricEntityLootSubProvider
         this.add(ModEntities.RACCOON,
                 LootTable.lootTable()
                         .pool(LootPool.lootPool()
-                                .setRolls(ConstantValue.exactly(1))
+                                .setRolls(ContextIntProviders.exactly(1))
                                 .add(LootItem.lootTableItem(Items.RABBIT_FOOT).setWeight(2)
-                                        .apply(SetItemCountFunction.setCount(UniformGenerator.between(0.0F, 2.0F)))
-                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.registries, UniformGenerator.between(0.0F, 2.0F))))
+                                        .apply(SetItemCountFunction.setCount(ContextIntProviders.between(0, 2)))
+                                        .apply(EnchantedCountIncreaseFunction.lootingMultiplier(this.enchantments, ContextFloatProviders.between(0, 2))))
                                 .add(LootItem.lootTableItem(Items.RABBIT_HIDE))
                                 .when(LootItemKilledByPlayerCondition.killedByPlayer())
                                 .build()

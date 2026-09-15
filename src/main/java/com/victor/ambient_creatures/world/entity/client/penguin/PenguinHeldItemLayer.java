@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
+import org.joml.Matrix4fc;
+
 public class PenguinHeldItemLayer extends RenderLayer<PenguinRenderState, PenguinModel>
 {
     public PenguinHeldItemLayer(RenderLayerParent<PenguinRenderState, PenguinModel> renderer)
@@ -37,19 +39,7 @@ public class PenguinHeldItemLayer extends RenderLayer<PenguinRenderState, Pengui
             body.translateAndRotate(poseStack);
 
             // Apply head transform to capture head animations (pitch adjustment for laying down, yaw/pitch from look).
-            poseStack.translate((head.x / 16.0F), (head.y / 16.0F), (head.z / 16.0F));
-
-            // Apply clamped look rotations from the entity's view angles.
-            if (isSliding)
-            {
-                poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.clamp(-yRot, -30.0f, 30.0f)));
-            }
-            else
-            {
-                poseStack.mulPose(Axis.YP.rotationDegrees(Mth.clamp(yRot, -30.0f, 30.0f)));
-            }
-
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.clamp(xRot, -25.0f, 45.0f)));
+            head.translateAndRotate(poseStack);
 
             // Small offset to position item at the beak in world space
             if (state.isBaby)
@@ -73,10 +63,7 @@ public class PenguinHeldItemLayer extends RenderLayer<PenguinRenderState, Pengui
             }
 
             // Rotate to orient the item correctly
-            if (!isSliding)
-            {
-                poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-            }
+            poseStack.rotateDegrees(Axis.XP, 90.0F);
 
             itemRenderState.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
             poseStack.popPose();

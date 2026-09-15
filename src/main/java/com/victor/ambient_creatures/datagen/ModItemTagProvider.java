@@ -2,13 +2,13 @@ package com.victor.ambient_creatures.datagen;
 
 import com.victor.ambient_creatures.util.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider.ItemTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Items;
 
 import java.util.concurrent.CompletableFuture;
 
-public class ModItemTagProvider extends FabricTagsProvider.ItemTagsProvider
+public class ModItemTagProvider extends ItemTagsProvider
 {
     public ModItemTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         super(output, registryLookupFuture);

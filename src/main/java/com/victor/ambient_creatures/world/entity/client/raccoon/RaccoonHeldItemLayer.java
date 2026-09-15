@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.util.Mth;
+import org.joml.Matrix4fc;
 
 public class RaccoonHeldItemLayer extends RenderLayer<RaccoonRenderState, RaccoonModel>
 {
@@ -52,7 +53,7 @@ public class RaccoonHeldItemLayer extends RenderLayer<RaccoonRenderState, Raccoo
             }
 
             // Rotate to orient the item correctly
-            poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
+            poseStack.rotateDegrees(Axis.XP, 90.0F);
 
             itemRenderState.submit(poseStack, submitNodeCollector, lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
             poseStack.popPose();
