@@ -339,6 +339,13 @@ public class Capybara extends TamableAnimal
     @Override
     public boolean isFood(ItemStack itemStack) { return itemStack.is(ModTags.Items.CAPYBARA_FOODS); }
 
+    public static boolean checkCapybaraSpawnRules(EntityType<Capybara> entityType, LevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random)
+    {
+        boolean nearWaterOrRiver = BlockPos.betweenClosedStream(pos.offset(-5, -2, -5), pos.offset(5, 2, 5)).anyMatch(p -> level.getBlockState(p).is(Blocks.WATER));
+
+        return nearWaterOrRiver && Animal.checkAnimalSpawnRules(entityType, level, spawnType, pos, random);
+    }
+    
     @Override
     public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner)
     {
